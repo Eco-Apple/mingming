@@ -15,7 +15,9 @@ struct ContentView: View {
             if isSplash {
                 Splash()
             } else {
-                Home()
+                NavigationStack {
+                    Home()
+                }
             }
         }
         .onAppear {
