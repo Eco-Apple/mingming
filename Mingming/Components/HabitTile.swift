@@ -11,6 +11,8 @@ struct HabitTile: View {
     var startMonth: Int
     var dates: [Date] = [.now]
     
+    var onDelete: () -> Void
+    
     var body: some View {
         VStack(alignment: .leading, spacing: .zero){
             HStack(alignment: .bottom, spacing: .zero) {
@@ -58,7 +60,7 @@ struct HabitTile: View {
             
             HStack(spacing: .zero) {
                 Button {
-                    
+                   onDelete()
                 } label: {
                     Image(systemName: "trash")
                         .font(.system(size: 12))
@@ -81,5 +83,5 @@ struct HabitTile: View {
 }
 
 #Preview {
-    HabitTile(startMonth: 2)
+    HabitTile(startMonth: 2, onDelete: {})
 }

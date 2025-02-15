@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		20BD60B62D58347D00214C29 /* Home+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BD60B52D58347D00214C29 /* Home+ViewModel.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		204BB0DE2D55EFD500D86202 /* Mingming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mingming.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		20BD60B52D58347D00214C29 /* Home+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Home+ViewModel.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,6 +50,7 @@
 		204BB0D52D55EFD400D86202 = {
 			isa = PBXGroup;
 			children = (
+				20BD60B52D58347D00214C29 /* Home+ViewModel.swift */,
 				204BB0E02D55EFD500D86202 /* Mingming */,
 				204BB0DF2D55EFD500D86202 /* Products */,
 			);
@@ -132,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20BD60B62D58347D00214C29 /* Home+ViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

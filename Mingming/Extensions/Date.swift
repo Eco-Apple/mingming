@@ -8,6 +8,14 @@
 import Foundation
 
 extension Date {
+    func formatTime() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mma"
+        formatter.amSymbol = "AM"
+        formatter.pmSymbol = "PM"
+        return formatter.string(from: self)
+    }
+    
     static func weekAndDaysInAYear(year: Int, startMonth: Int = 1) -> [[[Date]]] {
         var result: [[[Date]]] = []
         var savePreviousLastWeek: [Date] = []
