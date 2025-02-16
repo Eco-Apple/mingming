@@ -17,6 +17,12 @@ extension Add {
         var showTimePicker: Bool = false
         var selectedTime: Date = Date()
         
+        var dataService: DataService
+        
+        init(dataService: DataService) {
+            self.dataService = dataService
+        }
+        
         func reset() {
             title = ""
             tags = ""

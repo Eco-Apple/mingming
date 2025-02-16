@@ -13,14 +13,16 @@ class Habit {
     private(set) var title: String
     @Relationship(deleteRule: .cascade) private(set) var commits: [Commit]
     private(set) var tags: [String]
+    private(set) var schedules: [Date]
     
     private(set) var createdAt: Date
     private(set) var updatedAt: Date
     
-    init(title: String, tags: [String], commits: [Commit]) {
+    init(title: String, schedules: [Date], tags: [String], commits: [Commit]) {
         self.title = title
         self.commits = commits
         self.tags = tags
+        self.schedules = schedules
         
         self.createdAt = .now
         self.updatedAt = .now

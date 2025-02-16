@@ -11,7 +11,7 @@ struct Home: View {
     @State private var viewModel: ViewModel
     
     init() {
-        _viewModel = State(initialValue: .init())
+        _viewModel = State(initialValue: .init(dataService: .shared))
     }
     
     var body: some View {
@@ -31,7 +31,9 @@ struct Home: View {
                 .padding(.top, 12)
                 
                 VStack(alignment: .leading, spacing: 14) {
-                    HabitTile(startMonth: 2, onDelete: viewModel.onDelete)
+                    ForEach(viewModel.habits) { habit in
+                        HabitTile(startMonth: 2, onDelete: viewModel.onDelete)
+                    }
                 }
                 .padding(.horizontal, 12)
             }

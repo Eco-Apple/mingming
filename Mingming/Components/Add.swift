@@ -36,9 +36,7 @@ struct Add: View {
                     }
                 }
                 
-                TextField("#DailyHabits", text: $viewModel.tags)
-                    .customize(label: "Tags")
-                    .frame(width: 280)
+                TagField(text: $viewModel.tags, tagsLimit: 32)
             }
             .padding(.leading, 10)
             .padding(.trailing, 14)
@@ -77,5 +75,5 @@ struct Add: View {
 }
 
 #Preview {
-    Add(viewModel: Add.ViewModel())
+    Add(viewModel: Add.ViewModel(dataService: .shared))
 }
