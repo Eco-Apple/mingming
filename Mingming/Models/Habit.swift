@@ -9,14 +9,16 @@ import Foundation
 import SwiftData
 
 @Model
-class Habit {
+class Habit: Equatable {
     private(set) var title: String
-    @Relationship(deleteRule: .cascade) private(set) var commits: [Commit]
+    @Relationship(deleteRule: .cascade) var commits: [Commit]
     private(set) var tags: [String]
     private(set) var schedules: [Date]
     
     private(set) var createdAt: Date
     private(set) var updatedAt: Date
+    
+    var listOrder: Int
     
     init(title: String, schedules: [Date], tags: [String], commits: [Commit]) {
         self.title = title
@@ -26,5 +28,14 @@ class Habit {
         
         self.createdAt = .now
         self.updatedAt = .now
+        self.listOrder = 0
     }
+    
+    static func == (lhs: Habit, rhs: Habit) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension Habit {
+    static var example = Habit(title: "Example", schedules: [], tags: [], commits: [])
 }

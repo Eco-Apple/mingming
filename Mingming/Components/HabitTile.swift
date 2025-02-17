@@ -8,21 +8,22 @@
 import SwiftUI
 
 struct HabitTile: View {
-    var startMonth: Int
-    var dates: [Date] = [.now]
     
-    var onDelete: () -> Void
+    var habit: Habit
+    var startMonth: Int
+    
+    var onDelete: (Habit) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: .zero){
             HStack(alignment: .bottom, spacing: .zero) {
-                Text("Run")
+                Text(habit.title)
                     .font(.system(size: 22, weight: .medium))
                     .frame(height: 16)
                 
                 Spacer()
                 
-                Text("⏰ 5:30 PM")
+                Text("⏰ \(habit.schedules.first?.formatTime() ?? "")")
                     .font(.system(size: 9, weight: .medium))
                     .frame(height: 9)
             }
@@ -43,7 +44,7 @@ struct HabitTile: View {
                                         VStack(spacing: 2) {
                                             ForEach(Array(week.enumerated()), id: \.offset) { index, day in
                                                 Rectangle()
-                                                    .fill(day.isIn(dates) ? .do : .notDo)
+                                                    .fill(day.isIn(habit.commits) ? .do : .notDo)
                                                     .frame(width: 8, height: 8)
                                             }
                                         }
@@ -54,13 +55,13 @@ struct HabitTile: View {
                     }
                 }
                 .onAppear {
-                    proxy.scrollTo(startMonth - 1, anchor: .leading) // Change `1` to the index of the month you want
+                    proxy.scrollTo(startMonth - 1, anchor: .leading)
                 }
             }
             
             HStack(spacing: .zero) {
                 Button {
-                   onDelete()
+                   onDelete(habit)
                 } label: {
                     Image(systemName: "trash")
                         .font(.system(size: 12))
@@ -71,11 +72,11 @@ struct HabitTile: View {
                 Spacer()
                 
                 HStack(spacing: 4) {
-                    Text("#HealthyLifeStyle")
-                        .chip()
-                    Text("#DailyHabits")
-                        .chip()
-                }
+                    ForEach(habit.tags, id: \.self) { tag in
+                        Text(tag)
+                            .chip()
+                    }
+               }
                 .padding(.top, 10)
             }
         }
@@ -83,5 +84,5 @@ struct HabitTile: View {
 }
 
 #Preview {
-    HabitTile(startMonth: 2, onDelete: {})
+    HabitTile(habit: .example, startMonth: 2, onDelete: { _ in })
 }

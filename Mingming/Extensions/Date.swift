@@ -8,6 +8,11 @@
 import Foundation
 
 extension Date {
+    
+    var tomorrow: Date {
+        return Calendar.current.date(byAdding: .day, value: 1, to: self) ?? self
+    }
+    
     func formatTime() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mma"
@@ -106,11 +111,11 @@ extension Date {
         return components.date.flatMap { formatter.string(from: $0) }
     }
     
-    func isIn(_ dates: [Date], sameDay: Bool = true) -> Bool {
+    func isIn(_ commits: [Commit], sameDay: Bool = true) -> Bool {
         if sameDay {
-            dates.contains { Calendar.current.isDate($0, inSameDayAs: self)}
+            return commits.contains { Calendar.current.isDate($0.date, inSameDayAs: self)}
         } else {
-            dates.contains(self)
+            return commits.contains { $0.date == self }
         }
     }
 }

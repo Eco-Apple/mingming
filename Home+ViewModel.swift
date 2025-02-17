@@ -11,6 +11,7 @@ extension Home {
     
     @Observable
     class ViewModel {
+        var tags: [Tag] = []
         var habits: [Habit] = []
         
         var isAddPresented = false
@@ -18,6 +19,7 @@ extension Home {
         var isReminderPresented = false
         
         var add: Add.ViewModel
+        var habitToDelete: Habit?
         
         var dataService: DataService
         
@@ -27,11 +29,20 @@ extension Home {
         }
         
         func onAppear() {
-            let result = dataService.getHabits()
+            let habitResult: Result<[Habit], Error> = self.dataService.get()
             
-            switch result {
+            switch habitResult {
             case .success(let habits):
                 self.habits = habits
+            case .failure(let error):
+                fatalError(error.localizedDescription)
+            }
+            
+            let tagResult: Result<[Tag], Error> = self.dataService.get()
+            
+            switch tagResult {
+            case .success(let tags):
+                self.tags = tags
             case .failure(let error):
                 fatalError(error.localizedDescription)
             }
@@ -39,24 +50,59 @@ extension Home {
         }
         
         func deleteButtonCallback(isDelete: Bool) {
+            guard let habit = habitToDelete else { return }
+            
+            if isDelete {
+                let result = dataService.delete(habit)
+                
+                switch result {
+                case .success(let habit):
+                    habits.removeAll { $0 == habit }
+                case .failure(let error):
+                    fatalError(error.localizedDescription)
+                }
+            }
+            
             isDeletePresented = false
         }
         
-        func onDelete() {
+        func onDelete(habit: Habit) {
+            habitToDelete = habit
             isDeletePresented = true
         }
         
         func onAdd() {
-            let result = dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: add.tags.toTags(), commits: []))
+            let tags = add.tags.toTags()
+            let result = dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: tags, commits: []))
             
             switch result {
             case .success(let data):
-                print(data)
+                habits.append(data)
+                storeTags(tags)
             case .failure(let error):
                 fatalError(error.localizedDescription)
             }
             isAddPresented = false
             add.reset()
+        }
+        
+        private func storeTags(_ tags: [String]) {
+            for tag in tags {
+                let modifiedTag = tag.replacingOccurrences(of: "#", with: "")
+                
+                let result = dataService.add(tag: modifiedTag)
+                
+                switch result {
+                case .success(let tag):
+                    self.tags.append(tag)
+                case .failure(let error):
+                    if error as! DataService.TagError == DataService.TagError.tagExists {
+                        print("Tag already exists!")
+                    } else {
+                        fatalError(error.localizedDescription)
+                    }
+                }
+            }
         }
     }
 }

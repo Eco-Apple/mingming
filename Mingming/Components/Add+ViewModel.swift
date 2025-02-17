@@ -19,6 +19,8 @@ extension Add {
         
         var dataService: DataService
         
+        var isShown: Bool = false
+        
         init(dataService: DataService) {
             self.dataService = dataService
         }

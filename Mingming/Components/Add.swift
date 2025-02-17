@@ -71,6 +71,15 @@ struct Add: View {
             }
             .presentationDetents([.height(300)])
         }
+        .onAppear {
+            viewModel.isShown = true
+        }
+        .onDisappear {
+            viewModel.isShown = false
+        }
+        .opacity(viewModel.isShown ? 1: 0)
+        .offset(y: viewModel.isShown ? 0 : -10)
+        .animation(.easeInOut(duration: 0.5), value: viewModel.isShown)
     }
 }
 
