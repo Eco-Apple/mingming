@@ -12,7 +12,7 @@ import SwiftData
 class Habit: Equatable {
     private(set) var title: String
     @Relationship(deleteRule: .cascade) var commits: [Commit]
-    private(set) var tags: [String]
+    var tags: [Tag]
     private(set) var schedules: [Date]
     
     private(set) var createdAt: Date
@@ -20,7 +20,7 @@ class Habit: Equatable {
     
     var listOrder: Int
     
-    init(title: String, schedules: [Date], tags: [String], commits: [Commit]) {
+    init(title: String, schedules: [Date], tags: [Tag], commits: [Commit]) {
         self.title = title
         self.commits = commits
         self.tags = tags

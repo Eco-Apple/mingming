@@ -45,43 +45,91 @@ class DataService {
         }
     }
     
-    func add(habit: Habit) -> Result<Habit, Error> {
+    func add(habit: Habit) -> Result<(Habit, [Tag]), Error> {
         do {
+            var newTags = [Tag]()
+            var allTags = [Tag]()
+            
+            for tag in habit.tags {
+                let result = add(tag: tag)
+                
+                switch result {
+                case .success(let tag):
+                    newTags.append(tag)
+                    allTags.append(tag)
+                case .failure(let error):
+                    if let error = error as? DataService.TagExist {
+                        if !allTags.contains(where: { $0 == error.tag }) {
+                            error.tag.increaseHabitCount()
+                            allTags.append(error.tag)
+                        }
+                    } else {
+                        fatalError(error.localizedDescription)
+                    }
+                }
+            }
+            
+            habit.tags = allTags
+            
             context.insert(habit)
-            debugPrint(habit)
             try context.save()
             
-            return .success(habit)
+            return .success((habit, newTags))
         } catch {
             return .failure(error)
         }
     }
     
-    func add(tag: String) -> Result<Tag, Error> {
+    func add(tag: Tag) -> Result<Tag, Error> {
         do {
-            let lowercasedName = tag.lowercased()
             let allTags = try context.fetch(FetchDescriptor<Tag>())
             
-            if allTags.contains(where: { $0.name.caseInsensitiveCompare(tag) == .orderedSame }) == false {
-                let newTag = Tag(name: tag)
-                context.insert(newTag)
+            if let tag = allTags.first(where: {  $0.name.caseInsensitiveCompare(tag.name) == .orderedSame }) {
+                return .failure(TagExist(tag: tag))
+            } else {
+                context.insert(tag)
                 try context.save()
                 
-                return .success(newTag)
-            } else {
-                return .failure(TagError.tagExists)
+                return .success(tag)
             }
         } catch {
             return .failure(error)
         }
     }
     
-    func delete(_ habit: Habit) -> Result<Habit, Error> {
+    func delete(_ habit: Habit) -> Result<(Habit, [Tag]), Error> {
         do {
+            var deletedTags = [Tag]()
+            
+            for tag in habit.tags {
+                if tag.habitCount <= 1 {
+                    let result = delete(tag)
+                    switch result {
+                    case .success(let tag):
+                        deletedTags.append(tag)
+                    case .failure(let error):
+                        fatalError(error.localizedDescription)
+                    }
+                } else {
+                    tag.decreaseHabitCount()
+                }
+            }
+            
             context.delete(habit)
             try context.save()
             
-            return .success(habit)
+            return .success((habit, deletedTags))
+        } catch {
+            return .failure(error)
+        }
+    }
+    
+    func delete(_ tag: Tag) -> Result<Tag, Error> {
+        do {
+            context.delete(tag)
+            try context.save()
+            
+            return .success(tag)
         } catch {
             return .failure(error)
         }
@@ -89,7 +137,7 @@ class DataService {
 }
 
 extension DataService {
-    enum TagError: Error {
-        case tagExists
+    struct TagExist: Error {
+        let tag: Tag
     }
 }

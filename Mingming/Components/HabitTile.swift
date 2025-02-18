@@ -73,7 +73,7 @@ struct HabitTile: View {
                 
                 HStack(spacing: 4) {
                     ForEach(habit.tags, id: \.self) { tag in
-                        Text(tag)
+                        Text("#\(tag.name)")
                             .chip()
                     }
                }

@@ -56,8 +56,9 @@ extension Home {
                 let result = dataService.delete(habit)
                 
                 switch result {
-                case .success(let habit):
+                case .success(let (habit, tags)):
                     habits.removeAll { $0 == habit }
+                    self.tags.removeAll { tags.contains($0) }
                 case .failure(let error):
                     fatalError(error.localizedDescription)
                 }
@@ -72,37 +73,17 @@ extension Home {
         }
         
         func onAdd() {
-            let tags = add.tags.toTags()
-            let result = dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: tags, commits: []))
+            let result = dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: add.tags.toTags(), commits: []))
             
             switch result {
-            case .success(let data):
-                habits.append(data)
-                storeTags(tags)
+            case .success(let (habits, tags)):
+                self.habits.append(habits)
+                self.tags.append(contentsOf: tags)
             case .failure(let error):
                 fatalError(error.localizedDescription)
             }
             isAddPresented = false
             add.reset()
-        }
-        
-        private func storeTags(_ tags: [String]) {
-            for tag in tags {
-                let modifiedTag = tag.replacingOccurrences(of: "#", with: "")
-                
-                let result = dataService.add(tag: modifiedTag)
-                
-                switch result {
-                case .success(let tag):
-                    self.tags.append(tag)
-                case .failure(let error):
-                    if error as! DataService.TagError == DataService.TagError.tagExists {
-                        print("Tag already exists!")
-                    } else {
-                        fatalError(error.localizedDescription)
-                    }
-                }
-            }
         }
     }
 }
