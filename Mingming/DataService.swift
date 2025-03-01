@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import UserNotifications
 
 class DataService {
     private let container: ModelContainer
@@ -73,6 +74,8 @@ class DataService {
             
             context.insert(habit)
             try context.save()
+
+            addReminder(habit)
             
             return .success((habit, newTags))
         } catch {
@@ -132,6 +135,29 @@ class DataService {
             return .success(tag)
         } catch {
             return .failure(error)
+        }
+    }
+    
+    private func addReminder(_ habit: Habit) {
+        let content = UNMutableNotificationContent()
+        content.title = habit.title
+        content.body = habit.combineTags
+        content.sound = .default
+        
+        let calendar = Calendar.current
+        var dateComponents = DateComponents()
+        dateComponents.hour = calendar.component(.hour, from: habit.schedule)
+        dateComponents.minute = calendar.component(.minute, from: habit.schedule)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        let request = UNNotificationRequest(identifier: String(describing: habit.id), content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notifications: \(error)")
+            } else {
+                print("Daily notification scheduled at 8:00 AM")
+            }
         }
     }
 }

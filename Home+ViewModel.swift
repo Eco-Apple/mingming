@@ -29,24 +29,8 @@ extension Home {
         }
         
         func onAppear() {
-            let habitResult: Result<[Habit], Error> = self.dataService.get()
-            
-            switch habitResult {
-            case .success(let habits):
-                self.habits = habits
-            case .failure(let error):
-                fatalError(error.localizedDescription)
-            }
-            
-            let tagResult: Result<[Tag], Error> = self.dataService.get()
-            
-            switch tagResult {
-            case .success(let tags):
-                self.tags = tags
-            case .failure(let error):
-                fatalError(error.localizedDescription)
-            }
-            
+            requestNotificationPermission()
+            fetchHabits()
         }
         
         func deleteButtonCallback(isDelete: Bool) {
@@ -84,6 +68,36 @@ extension Home {
             }
             isAddPresented = false
             add.reset()
+        }
+        
+        private func requestNotificationPermission() {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                if let error = error {
+                    print("Notification permission error: \(error)")
+                } else {
+                    print("Notification permission granted: \(granted)")
+                }
+            }
+        }
+        
+        private func fetchHabits() {
+            let habitResult: Result<[Habit], Error> = self.dataService.get()
+            
+            switch habitResult {
+            case .success(let habits):
+                self.habits = habits
+            case .failure(let error):
+                fatalError(error.localizedDescription)
+            }
+            
+            let tagResult: Result<[Tag], Error> = self.dataService.get()
+            
+            switch tagResult {
+            case .success(let tags):
+                self.tags = tags
+            case .failure(let error):
+                fatalError(error.localizedDescription)
+            }
         }
     }
 }

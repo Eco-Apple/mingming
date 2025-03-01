@@ -13,12 +13,20 @@ class Habit: Equatable {
     private(set) var title: String
     @Relationship(deleteRule: .cascade) var commits: [Commit]
     var tags: [Tag]
-    private(set) var schedules: [Date]
+    var schedules: [Date]
     
     private(set) var createdAt: Date
     private(set) var updatedAt: Date
     
     var listOrder: Int
+    
+    var combineTags: String {
+        tags.map(\.self).map{"#\($0.name)"}.joined(separator: ", ")
+    }
+    
+    var schedule: Date {
+        schedules.first!
+    }
     
     init(title: String, schedules: [Date], tags: [Tag], commits: [Commit]) {
         self.title = title
