@@ -21,12 +21,16 @@ struct Home: View {
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(alignment: .center, spacing: 4.0) {
-                                FilterButton("All", isActive: true)
-                                    .padding(.leading, (UIScreen.main.bounds.width * 0.5) + 6)
-                                    .id("all")
+                                FilterButton("All", isActive: viewModel.selectedTagNames.contains("All")) {
+                                    viewModel.selectTagName("All")
+                                }
+                                .padding(.leading, (UIScreen.main.bounds.width * 0.5) + 6)
+                                .id("all")
                                 
                                 ForEach(viewModel.tags) { tag in
-                                    FilterButton(tag.name, isActive: false)
+                                    FilterButton(tag.name, isActive: viewModel.selectedTagNames.contains(tag.name)) {
+                                        viewModel.selectTagName(tag.name)
+                                    }
                                 }
                             }
                             .padding(0.5)
@@ -57,8 +61,12 @@ struct Home: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .center, spacing: 4.0) {
-                    FilterButton("2025", isActive: false)
-                    FilterButton("All", isActive: true)
+                    FilterButton("2025", isActive: viewModel.selectedYear == "2025") {
+                        viewModel.selectedYear = "2025"
+                    }
+                    FilterButton("All", isActive: viewModel.selectedYear == "All") {
+                        viewModel.selectedYear = "All"
+                    }
                 }
                 .padding(0.5)
             }
@@ -128,7 +136,9 @@ private struct HomeAddButton: View {
             if home.isAddPresented {
                 Button {
                     isCheckShown = false
-                    home.onAdd()
+                    Task {
+                        await home.onAdd()
+                    }
                 } label: {
                     Image(.check)
                 }

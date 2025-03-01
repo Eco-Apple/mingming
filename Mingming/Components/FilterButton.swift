@@ -11,16 +11,17 @@ struct FilterButton: View {
     var text: String
     var isActive: Bool
     
-    init(_ text: String, isActive: Bool) {
+    var onTap: () -> Void
+    
+    init(_ text: String, isActive: Bool, onTap: @escaping () -> Void) {
         self.text = text
         self.isActive = isActive
+        self.onTap = onTap
     }
     
     var body: some View {
         if isActive {
-            Button {
-                
-            } label: {
+            Button(action: onTap){
                 Text(text)
                     .foregroundStyle(.white)
                     .font(.system(size: 11, weight: .medium))
@@ -38,9 +39,7 @@ struct FilterButton: View {
             }
             .buttonStyle(PlainButtonStyle())
         } else {
-            Button {
-                
-            } label: {
+            Button(action: onTap) {
                 Text(text)
                     .foregroundStyle(.black)
                     .font(.system(size: 11, weight: .medium))
@@ -57,5 +56,5 @@ struct FilterButton: View {
     }
 }
 #Preview {
-    FilterButton("All", isActive: true)
+    FilterButton("All", isActive: true, onTap: {})
 }

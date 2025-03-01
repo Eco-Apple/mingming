@@ -46,8 +46,14 @@ class DataService {
         }
     }
     
-    func add(habit: Habit) -> Result<(Habit, [Tag]), Error> {
+    func add(habit: Habit) async -> Result<(Habit, [Tag]), Error> {
         do {
+            let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+            
+            guard granted else {
+                return .failure(NSError(domain: "NotificationPermission", code: 1, userInfo: [NSLocalizedDescriptionKey: "User denied notification permission."]))
+            }
+            
             var newTags = [Tag]()
             var allTags = [Tag]()
             
@@ -74,10 +80,12 @@ class DataService {
             
             context.insert(habit)
             try context.save()
-
+            
             addReminder(habit)
             
             return .success((habit, newTags))
+            
+            
         } catch {
             return .failure(error)
         }
@@ -121,6 +129,8 @@ class DataService {
             context.delete(habit)
             try context.save()
             
+            deleteReminder(habit)
+            
             return .success((habit, deletedTags))
         } catch {
             return .failure(error)
@@ -154,9 +164,25 @@ class DataService {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("Error scheduling notifications: \(error)")
+                debugPrint("Error scheduling notifications: \(error)")
             } else {
-                print("Daily notification scheduled at 8:00 AM")
+                self.getAllPendingNotifications()
+            }
+        }
+    }
+    
+    private func deleteReminder(_ habit: Habit) {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(describing: habit.id)])
+        getAllPendingNotifications()
+    }
+    
+    private func getAllPendingNotifications() {
+        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
+            debugPrint("Pending Notifications")
+            for request in requests {
+                debugPrint("=========================")
+                debugPrint("ID: ", request.identifier)
+                debugPrint("Title: ", request.content.title)
             }
         }
     }

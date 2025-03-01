@@ -23,14 +23,33 @@ extension Home {
         
         var dataService: DataService
         
+        var selectedTagNames: [String] = ["All"]
+        var selectedYear: String = "All"
+        
         init(dataService: DataService) {
             self.dataService = dataService
             self.add = Add.ViewModel(dataService: dataService)
         }
         
         func onAppear() {
-            requestNotificationPermission()
             fetchHabits()
+        }
+        
+        func selectTagName(_ name: String) {
+            guard name != "All" else {
+                selectedTagNames = ["All"]
+                return
+            }
+           
+            if selectedTagNames.contains("All") {
+                selectedTagNames = []
+            }
+            
+            if selectedTagNames.contains(name) {
+                selectedTagNames.removeAll { $0 == name }
+            } else {
+                selectedTagNames.append(name)
+            }
         }
         
         func deleteButtonCallback(isDelete: Bool) {
@@ -56,28 +75,18 @@ extension Home {
             isDeletePresented = true
         }
         
-        func onAdd() {
-            let result = dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: add.tags.toTags(), commits: []))
+        func onAdd() async {
+            let result = await dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: add.tags.toTags(), commits: []))
             
             switch result {
             case .success(let (habits, tags)):
                 self.habits.append(habits)
                 self.tags.append(contentsOf: tags)
             case .failure(let error):
-                fatalError(error.localizedDescription)
+                debugPrint(error.localizedDescription)
             }
             isAddPresented = false
             add.reset()
-        }
-        
-        private func requestNotificationPermission() {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-                if let error = error {
-                    print("Notification permission error: \(error)")
-                } else {
-                    print("Notification permission granted: \(granted)")
-                }
-            }
         }
         
         private func fetchHabits() {
