@@ -7,12 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		20BD60B62D58347D00214C29 /* Home+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BD60B52D58347D00214C29 /* Home+ViewModel.swift */; };
+		20AB21E62D742303000ECABC /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20AB21E52D742303000ECABC /* WidgetKit.framework */; };
+		20AB21E82D742303000ECABC /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20AB21E72D742303000ECABC /* SwiftUI.framework */; };
+		20AB21F52D742305000ECABC /* HabitCommitsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 20AB21E32D742303000ECABC /* HabitCommitsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		20AB21F32D742305000ECABC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 204BB0D62D55EFD400D86202 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 20AB21E22D742303000ECABC;
+			remoteInfo = HabitCommitsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		20AB21F62D742305000ECABC /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				20AB21F52D742305000ECABC /* HabitCommitsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		204BB0DE2D55EFD500D86202 /* Mingming.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mingming.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		20BD60B52D58347D00214C29 /* Home+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Home+ViewModel.swift"; sourceTree = "<group>"; };
+		20AB21E32D742303000ECABC /* HabitCommitsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitCommitsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		20AB21E52D742303000ECABC /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		20AB21E72D742303000ECABC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -23,6 +51,27 @@
 			);
 			target = 204BB0DD2D55EFD500D86202 /* Mingming */;
 		};
+		2046004B2D7446D70076545E /* Exceptions for "HabitCommits" folder in "Mingming" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HabitCommits.swift,
+			);
+			target = 204BB0DD2D55EFD500D86202 /* Mingming */;
+		};
+		2046004D2D7446E30076545E /* Exceptions for "Mingming" folder in "HabitCommitsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/SharedDate.swift,
+			);
+			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
+		};
+		20AB21FA2D742305000ECABC /* Exceptions for "HabitCommits" folder in "HabitCommitsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -30,8 +79,18 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				201482032D56C1480034F319 /* Exceptions for "Mingming" folder in "Mingming" target */,
+				2046004D2D7446E30076545E /* Exceptions for "Mingming" folder in "HabitCommitsExtension" target */,
 			);
 			path = Mingming;
+			sourceTree = "<group>";
+		};
+		20AB21E92D742303000ECABC /* HabitCommits */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2046004B2D7446D70076545E /* Exceptions for "HabitCommits" folder in "Mingming" target */,
+				20AB21FA2D742305000ECABC /* Exceptions for "HabitCommits" folder in "HabitCommitsExtension" target */,
+			);
+			path = HabitCommits;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -44,14 +103,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		20AB21E02D742303000ECABC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20AB21E82D742303000ECABC /* SwiftUI.framework in Frameworks */,
+				20AB21E62D742303000ECABC /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		204BB0D52D55EFD400D86202 = {
 			isa = PBXGroup;
 			children = (
-				20BD60B52D58347D00214C29 /* Home+ViewModel.swift */,
 				204BB0E02D55EFD500D86202 /* Mingming */,
+				20AB21E92D742303000ECABC /* HabitCommits */,
+				20AB21E42D742303000ECABC /* Frameworks */,
 				204BB0DF2D55EFD500D86202 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,8 +129,18 @@
 			isa = PBXGroup;
 			children = (
 				204BB0DE2D55EFD500D86202 /* Mingming.app */,
+				20AB21E32D742303000ECABC /* HabitCommitsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		20AB21E42D742303000ECABC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				20AB21E52D742303000ECABC /* WidgetKit.framework */,
+				20AB21E72D742303000ECABC /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,10 +153,12 @@
 				204BB0DA2D55EFD500D86202 /* Sources */,
 				204BB0DB2D55EFD500D86202 /* Frameworks */,
 				204BB0DC2D55EFD500D86202 /* Resources */,
+				20AB21F62D742305000ECABC /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				20AB21F42D742305000ECABC /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				204BB0E02D55EFD500D86202 /* Mingming */,
@@ -88,6 +169,28 @@
 			productName = Mingming;
 			productReference = 204BB0DE2D55EFD500D86202 /* Mingming.app */;
 			productType = "com.apple.product-type.application";
+		};
+		20AB21E22D742303000ECABC /* HabitCommitsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20AB21F92D742305000ECABC /* Build configuration list for PBXNativeTarget "HabitCommitsExtension" */;
+			buildPhases = (
+				20AB21DF2D742303000ECABC /* Sources */,
+				20AB21E02D742303000ECABC /* Frameworks */,
+				20AB21E12D742303000ECABC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				20AB21E92D742303000ECABC /* HabitCommits */,
+			);
+			name = HabitCommitsExtension;
+			packageProductDependencies = (
+			);
+			productName = HabitCommitsExtension;
+			productReference = 20AB21E32D742303000ECABC /* HabitCommitsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -100,6 +203,9 @@
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					204BB0DD2D55EFD500D86202 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					20AB21E22D742303000ECABC = {
 						CreatedOnToolsVersion = 16.1;
 					};
 				};
@@ -119,12 +225,20 @@
 			projectRoot = "";
 			targets = (
 				204BB0DD2D55EFD500D86202 /* Mingming */,
+				20AB21E22D742303000ECABC /* HabitCommitsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		204BB0DC2D55EFD500D86202 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		20AB21E12D742303000ECABC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -138,11 +252,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				20BD60B62D58347D00214C29 /* Home+ViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		20AB21DF2D742303000ECABC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		20AB21F42D742305000ECABC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
+			targetProxy = 20AB21F32D742305000ECABC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		204BB0EA2D55EFD500D86202 /* Debug */ = {
@@ -324,6 +452,60 @@
 			};
 			name = Release;
 		};
+		20AB21F72D742305000ECABC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 37Z7CK9SP4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitCommits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitCommits;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecovillaraza.Mingming.HabitCommits;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		20AB21F82D742305000ECABC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 37Z7CK9SP4;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HabitCommits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = HabitCommits;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ecovillaraza.Mingming.HabitCommits;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -341,6 +523,15 @@
 			buildConfigurations = (
 				204BB0ED2D55EFD500D86202 /* Debug */,
 				204BB0EE2D55EFD500D86202 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		20AB21F92D742305000ECABC /* Build configuration list for PBXNativeTarget "HabitCommitsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20AB21F72D742305000ECABC /* Debug */,
+				20AB21F82D742305000ECABC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
