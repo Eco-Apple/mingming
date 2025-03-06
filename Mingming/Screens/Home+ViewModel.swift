@@ -23,8 +23,10 @@ extension Home {
         
         var dataService: DataService
         
-        var selectedTagNames: [String] = ["All"]
+        var years: [String] = ["2024", "2025"]
         var selectedYear: String = "All"
+        
+        var selectedTagNames: [String] = ["All"]
         
         init(dataService: DataService) {
             self.dataService = dataService
@@ -35,12 +37,18 @@ extension Home {
             fetchHabits()
         }
         
+        func selectYear(_ year: String) {
+            selectedYear = year
+            filterHabits()
+        }
+        
         func selectTagName(_ name: String) {
             guard name != "All" else {
                 selectedTagNames = ["All"]
+                filterHabits()
                 return
             }
-           
+            
             if selectedTagNames.contains("All") {
                 selectedTagNames = []
             }
@@ -50,6 +58,12 @@ extension Home {
             } else {
                 selectedTagNames.append(name)
             }
+            
+            if selectedTagNames.isEmpty {
+                selectedTagNames = ["All"]
+            }
+            
+            filterHabits()
         }
         
         func deleteButtonCallback(isDelete: Bool) {
@@ -89,6 +103,17 @@ extension Home {
             add.reset()
         }
         
+        private func filterHabits() {
+            let result: Result<[Habit], Error> = self.dataService.get(tagNames: selectedTagNames, year: selectedYear)
+            
+            switch result {
+            case .success(let habits):
+                self.habits = habits
+            case .failure(let error):
+                debugPrint(error.localizedDescription)
+            }
+        }
+        
         private func fetchHabits() {
             let habitResult: Result<[Habit], Error> = self.dataService.get()
             
@@ -96,7 +121,7 @@ extension Home {
             case .success(let habits):
                 self.habits = habits
             case .failure(let error):
-                fatalError(error.localizedDescription)
+                debugPrint(error.localizedDescription)
             }
             
             let tagResult: Result<[Tag], Error> = self.dataService.get()

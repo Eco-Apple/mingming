@@ -61,8 +61,10 @@ struct Home: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .center, spacing: 4.0) {
-                    FilterButton("2025", isActive: viewModel.selectedYear == "2025") {
-                        viewModel.selectedYear = "2025"
+                    ForEach(viewModel.years, id: \.self) { year in
+                        FilterButton(year, isActive: viewModel.selectedYear == year) {
+                            viewModel.selectYear(year)
+                        }
                     }
                     FilterButton("All", isActive: viewModel.selectedYear == "All") {
                         viewModel.selectedYear = "All"
