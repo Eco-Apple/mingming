@@ -10,9 +10,29 @@ import SwiftData
 
 @Model
 class Commit {
-    var date: Date
+    private(set) var status: CommitStatus
+    private(set) var date: Date
     
-    init(date: Date) {
-        self.date = date
+    private var createdAt: Date
+    private var updatedAt: Date
+    
+    func update(status: CommitStatus) {
+        self.status = status
+        updatedAt = .now
     }
+    
+    init(date: Date, status: CommitStatus) {
+        self.status = status
+        self.date = date
+        
+        self.createdAt = .now
+        self.updatedAt = .now
+    }
+}
+
+enum CommitStatus: Codable, Equatable {
+    case completed
+    case skippedManually
+    case forgotten
+    case later(Date)
 }

@@ -41,6 +41,7 @@
 		20AB21E32D742303000ECABC /* HabitCommitsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HabitCommitsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		20AB21E52D742303000ECABC /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		20AB21E72D742303000ECABC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		20C2432F2D79ADD200E0DC35 /* HabitCommitsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HabitCommitsExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -58,17 +59,22 @@
 			);
 			target = 204BB0DD2D55EFD500D86202 /* Mingming */;
 		};
-		2046004D2D7446E30076545E /* Exceptions for "Mingming" folder in "HabitCommitsExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Shared/SharedDate.swift,
-			);
-			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
-		};
 		20AB21FA2D742305000ECABC /* Exceptions for "HabitCommits" folder in "HabitCommitsExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+			);
+			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
+		};
+		20C2432A2D79A92000E0DC35 /* Exceptions for "Mingming" folder in "HabitCommitsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				DataService.swift,
+				Extensions/Date.swift,
+				Models/Commit.swift,
+				Models/Habit.swift,
+				Models/Tag.swift,
 			);
 			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
 		};
@@ -79,7 +85,7 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				201482032D56C1480034F319 /* Exceptions for "Mingming" folder in "Mingming" target */,
-				2046004D2D7446E30076545E /* Exceptions for "Mingming" folder in "HabitCommitsExtension" target */,
+				20C2432A2D79A92000E0DC35 /* Exceptions for "Mingming" folder in "HabitCommitsExtension" target */,
 			);
 			path = Mingming;
 			sourceTree = "<group>";
@@ -118,6 +124,7 @@
 		204BB0D52D55EFD400D86202 = {
 			isa = PBXGroup;
 			children = (
+				20C2432F2D79ADD200E0DC35 /* HabitCommitsExtension.entitlements */,
 				204BB0E02D55EFD500D86202 /* Mingming */,
 				20AB21E92D742303000ECABC /* HabitCommits */,
 				20AB21E42D742303000ECABC /* Frameworks */,
@@ -397,6 +404,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Mingming/Mingming.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mingming/Preview Content\"";
@@ -427,6 +435,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Mingming/Mingming.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mingming/Preview Content\"";
@@ -457,6 +466,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HabitCommitsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 37Z7CK9SP4;
@@ -484,6 +494,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = HabitCommitsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 37Z7CK9SP4;

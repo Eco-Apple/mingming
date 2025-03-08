@@ -16,7 +16,9 @@ extension Home {
         
         var isAddPresented = false
         var isDeletePresented = false
+        
         var isReminderPresented = false
+        var habitsToRemind: [Habit] = []
         
         var add: Add.ViewModel
         var habitToDelete: Habit?
@@ -103,6 +105,14 @@ extension Home {
             add.reset()
         }
         
+        func onRemoveReminder(habit: Habit) {
+            habitsToRemind.removeAll { $0 == habit }
+            
+            if habitsToRemind.isEmpty {
+                isReminderPresented = false
+            }
+        }
+        
         private func filterHabits() {
             let result: Result<[Habit], Error> = self.dataService.get(tagNames: selectedTagNames, year: selectedYear)
             
@@ -120,6 +130,8 @@ extension Home {
             switch habitResult {
             case .success(let habits):
                 self.habits = habits
+                checkReminder(habits: habits)
+                checkForgottenHabits(habits: habits)
             case .failure(let error):
                 debugPrint(error.localizedDescription)
             }
@@ -131,6 +143,71 @@ extension Home {
                 self.tags = tags
             case .failure(let error):
                 fatalError(error.localizedDescription)
+            }
+        }
+        
+        private func checkReminder(habits: [Habit]) {
+            for habit in habits {
+                if let lastCommit = habit.commits.last {
+                    if lastCommit.date.startOfDay < Date.now.startOfDay {
+                        showReminder(habit)
+                    } else if lastCommit.date.startOfDay == Date.now.startOfDay {
+                        switch lastCommit.status {
+                        case .later(let date):
+                            checkTime(date) {
+                                self.showReminder(habit)
+                            }
+                        case .completed:
+                            break
+                        case .skippedManually:
+                            break
+                        case .forgotten:
+                            break
+                        }
+                    }
+                } else {
+                    checkTime(habit.schedule) {
+                        self.showReminder(habit)
+                    }
+                }
+            }
+        }
+        
+        private func checkTime(_ date: Date, completion: @escaping () -> Void) {
+            let time = date.time
+            let todayTime = Date.now.time
+            
+            if todayTime.hour! > time.hour! {
+                completion()
+            } else if todayTime.hour! == time.hour! {
+                if todayTime.minute! >= time.minute! {
+                    completion()
+                }
+            }
+        }
+        
+        private func showReminder(_ habit: Habit) {
+            if isReminderPresented != true {
+                isReminderPresented = true
+            }
+            
+            habitsToRemind.append(habit)
+        }
+        
+        private func checkForgottenHabits(habits: [Habit]) {
+            for habit in habits {
+                if let lastCommit = habit.commits.last {
+                    if let yesterday = Date.now.startOfDay.addDay(-1) {
+                        if let daysBetween = lastCommit.date.startOfDay.daysBetween(this: yesterday), daysBetween > 0 {
+                            let lastCommitDate = lastCommit.date
+                            for index in 1...daysBetween {
+                                if let newDate = lastCommitDate.startOfDay.addDay(index){
+                                    habit.commits.append(Commit(date: newDate, status: .forgotten))
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

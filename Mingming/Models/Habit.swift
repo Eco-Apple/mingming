@@ -45,5 +45,5 @@ class Habit: Equatable {
 }
 
 extension Habit {
-    static var example = Habit(title: "Example", schedules: [], tags: [], commits: [])
+    static var example = Habit(title: "Drink water", schedules: [.now], tags: [Tag(name: "Exercise")], commits: [])
 }

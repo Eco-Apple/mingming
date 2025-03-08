@@ -8,45 +8,47 @@
 import SwiftUI
 
 struct Reminder: View {
+    @State var viewModel: ViewModel
+    
+    init(habit: Habit, onRemove: @escaping () -> Void) {
+        _viewModel = State(initialValue: .init(dataService: .shared, habit: habit, onRemove: onRemove))
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: .zero){
+        VStack(alignment: .leading, spacing: .zero) {
             Spacer()
             
             VStack(alignment: .leading, spacing: .zero) {
                 (Text("⏰ ")
-                + Text("Drink Water"))
+                 + Text(viewModel.habit.title))
                     .font(.system(size: 18, weight: .medium))
                     .frame(height: 15, alignment: .center)
                     .padding(.top, 21)
                 
                 HStack(alignment: .bottom, spacing: .zero) {
-                    Text("#HealthyLifeStyle")
-                        .chip(size: .medium)
+                    ForEach(viewModel.habit.tags, id: \.self) { tag in
+                        Text("#\(tag.name)")
+                            .chip(size: .medium)
+                    }
                 }
                 .padding(.top, 16)
                 
                 HStack(alignment: .center, spacing: .zero) {
-                    Button {
-                        
-                    } label: {
+                    Button(action: viewModel.done){
                         Text("✔️ Done")
                             .font(.system(size: 16, weight: .medium))
                     }
                     .buttonStyle(PlainButtonStyle())
                     .frame(maxWidth: .infinity)
                     
-                    Button {
-                        
-                    } label: {
+                    Button(action: viewModel.skipped) {
                         Text("❌ Skipped")
                             .font(.system(size: 16, weight: .medium))
                     }
                     .buttonStyle(PlainButtonStyle())
                     .frame(maxWidth: .infinity)
                     
-                    Button {
-                        
-                    } label: {
+                    Button(action: viewModel.later) {
                         Text("⏳Later")
                             .font(.system(size: 16, weight: .medium))
                     }
@@ -70,5 +72,7 @@ struct Reminder: View {
 }
 
 #Preview {
-    Reminder()
+    Reminder(habit: .example) {
+        
+    }
 }

@@ -97,8 +97,12 @@ struct Home: View {
         .customAlert(isPresented: $viewModel.isDeletePresented) {
             Delete(callback: viewModel.deleteButtonCallback)
         }
-        .customAlert(isPresented: $viewModel.isReminderPresented) {
-            Reminder()
+        .customAlert(isPresented: $viewModel.isReminderPresented, isOverlayShow: .constant(false)) {
+            ForEach(viewModel.habitsToRemind) { habit in
+                Reminder(habit: habit) {
+                    viewModel.onRemoveReminder(habit: habit)
+                }
+            }
         }
     }
 }

@@ -22,9 +22,17 @@ class DataService {
         context = container.mainContext
     }
     
-    func get() -> Result<[Habit], Error> {
+    func get(tagNames: [String] = [], year: String? = nil) -> Result<[Habit], Error> {
         do {
-            let descriptor = FetchDescriptor<Habit>(sortBy: [SortDescriptor(\Habit.listOrder)])
+            let firstAndLastDate = year != nil ? Date.firstAndLastDate(of: year!) : nil
+            let firstDate = firstAndLastDate?.0
+            let lastDate = firstAndLastDate?.1
+            
+           let predicate: Predicate<Habit>? = #Predicate { habit in
+               (tagNames.isEmpty || tagNames.contains("All") || habit.tags.contains { tag in tagNames.contains(tag.name) }) && ( firstDate == nil || lastDate == nil || habit.createdAt >= firstDate! && habit.createdAt <= lastDate!)
+            }
+            
+            let descriptor = FetchDescriptor<Habit>(predicate: predicate, sortBy: [SortDescriptor(\Habit.listOrder)])
             
             let habits = try context.fetch(descriptor)
             
@@ -71,7 +79,7 @@ class DataService {
                             allTags.append(error.tag)
                         }
                     } else {
-                        fatalError(error.localizedDescription)
+                        debugPrint(error.localizedDescription)
                     }
                 }
             }
