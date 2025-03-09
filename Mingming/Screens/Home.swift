@@ -73,6 +73,7 @@ struct Home: View {
                 .padding(0.5)
             }
             .padding(.leading, 12)
+            .padding(.bottom, 10)
         }
         .customToolbar {
             HStack(alignment: .bottom, spacing: .zero) {

@@ -89,7 +89,7 @@ class DataService {
             context.insert(habit)
             try context.save()
             
-            addReminder(habit)
+            NotificationHelper.addNotification(id: String(describing: habit.id), title: habit.title, body: habit.combineTags, date: habit.schedule, repeats: true)
             
             return .success((habit, newTags))
             
@@ -137,7 +137,7 @@ class DataService {
             context.delete(habit)
             try context.save()
             
-            deleteReminder(habit)
+            NotificationHelper.deleteNotification(id: String(describing: habit.id))
             
             return .success((habit, deletedTags))
         } catch {
@@ -153,45 +153,6 @@ class DataService {
             return .success(tag)
         } catch {
             return .failure(error)
-        }
-    }
-    
-    private func addReminder(_ habit: Habit) {
-        let content = UNMutableNotificationContent()
-        content.title = habit.title
-        content.body = habit.combineTags
-        content.sound = .default
-        
-        let calendar = Calendar.current
-        var dateComponents = DateComponents()
-        dateComponents.hour = calendar.component(.hour, from: habit.schedule)
-        dateComponents.minute = calendar.component(.minute, from: habit.schedule)
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        let request = UNNotificationRequest(identifier: String(describing: habit.id), content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                debugPrint("Error scheduling notifications: \(error)")
-            } else {
-                self.getAllPendingNotifications()
-            }
-        }
-    }
-    
-    private func deleteReminder(_ habit: Habit) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [String(describing: habit.id)])
-        getAllPendingNotifications()
-    }
-    
-    private func getAllPendingNotifications() {
-        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
-            debugPrint("Pending Notifications")
-            for request in requests {
-                debugPrint("=========================")
-                debugPrint("ID: ", request.identifier)
-                debugPrint("Title: ", request.content.title)
-            }
         }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 extension Reminder {
     
@@ -23,19 +24,21 @@ extension Reminder {
         
         func done() {
             updateCommit(with: .completed)
+            WidgetCenter.shared.reloadAllTimelines()
         }
-        
+            
         func skipped() {
             updateCommit(with: .skippedManually)
         }
         
         func later() {
-            let laterDate = Calendar.current.date(byAdding: .hour, value: 1, to: .now)!
+            let laterDate = Calendar.current.date(byAdding: .minute, value: 10, to: .now)!
             updateCommit(with: .later(laterDate))
+            NotificationHelper.addNotification(id: "\(String(describing: habit.id))_late", title: habit.title, body: habit.combineTags, date: laterDate)
         }
         
         private func updateCommit(with status: CommitStatus) {
-            if let lastCommit = habit.commits.last, lastCommit.date.startOfDay != Date.now.startOfDay {
+            if let lastCommit = habit.commits.last, lastCommit.date.startOfDay == Date.now.startOfDay {
                 lastCommit.update(status: status)
             } else {
                 habit.commits.append(Commit(date: .now, status: status))

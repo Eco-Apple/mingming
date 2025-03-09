@@ -23,7 +23,6 @@ struct Reminder: View {
                  + Text(viewModel.habit.title))
                     .font(.system(size: 18, weight: .medium))
                     .frame(height: 15, alignment: .center)
-                    .padding(.top, 21)
                 
                 HStack(alignment: .bottom, spacing: .zero) {
                     ForEach(viewModel.habit.tags, id: \.self) { tag in
@@ -57,17 +56,16 @@ struct Reminder: View {
                 }
                 .frame(height: 13)
                 .padding(.top, 18)
-
-                Spacer()
             }
+            .padding(.top, 21)
+            .padding(.bottom, 13)
             .padding(.horizontal, 17)
-            .frame(width: 378, height: 119, alignment: .leading)
             .background(.white)
             .cornerRadius(15)
             .shadow(color: .black.opacity(0.25), radius: 6.3, x: 0, y: 0)
-            .padding(.bottom, 44)
+            .padding(.bottom, 10)
+            .padding(.horizontal, 12)
         }
-        .edgesIgnoringSafeArea(.bottom)
     }
 }
 

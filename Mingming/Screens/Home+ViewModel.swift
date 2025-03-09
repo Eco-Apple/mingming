@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WidgetKit
 
 extension Home {
     
@@ -78,6 +79,8 @@ extension Home {
                 case .success(let (habit, tags)):
                     habits.removeAll { $0 == habit }
                     self.tags.removeAll { tags.contains($0) }
+                    
+                    WidgetCenter.shared.reloadAllTimelines()
                 case .failure(let error):
                     fatalError(error.localizedDescription)
                 }
@@ -98,6 +101,8 @@ extension Home {
             case .success(let (habits, tags)):
                 self.habits.append(habits)
                 self.tags.append(contentsOf: tags)
+                
+                WidgetCenter.shared.reloadAllTimelines()
             case .failure(let error):
                 debugPrint(error.localizedDescription)
             }
@@ -150,7 +155,9 @@ extension Home {
             for habit in habits {
                 if let lastCommit = habit.commits.last {
                     if lastCommit.date.startOfDay < Date.now.startOfDay {
-                        showReminder(habit)
+                        checkTime(habit.schedule) {
+                            self.showReminder(habit)
+                        }
                     } else if lastCommit.date.startOfDay == Date.now.startOfDay {
                         switch lastCommit.status {
                         case .later(let date):
@@ -197,6 +204,11 @@ extension Home {
         private func checkForgottenHabits(habits: [Habit]) {
             for habit in habits {
                 if let lastCommit = habit.commits.last {
+                    if case .later(let date) = lastCommit.status {
+                        lastCommit.update(status: .forgotten)
+                    }
+                    
+                    // Will check if there's a gap between last commit date and todays date.
                     if let yesterday = Date.now.startOfDay.addDay(-1) {
                         if let daysBetween = lastCommit.date.startOfDay.daysBetween(this: yesterday), daysBetween > 0 {
                             let lastCommitDate = lastCommit.date

@@ -71,6 +71,7 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				DataService.swift,
+				Enums/NotificationHelper.swift,
 				Extensions/Date.swift,
 				Models/Commit.swift,
 				Models/Habit.swift,
