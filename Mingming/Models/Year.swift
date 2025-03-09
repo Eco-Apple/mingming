@@ -1,20 +1,24 @@
 //
-//  Tag.swift
+//  Year.swift
 //  Mingming
 //
-//  Created by Jerico Villaraza on 2/16/25.
+//  Created by Jerico Villaraza on 3/9/25.
 //
 
-import Foundation
 import SwiftData
+import SwiftUI
 
 @Model
-class Tag {
-    @Attribute(.unique) var name: String
+class Year {
+    @Attribute(.unique) var value: Int
     private(set) var habitCount: Int
     
     var createdAt: Date
     var updatedAt: Date
+    
+    var stringValue: String {
+        String(value)
+    }
     
     func increaseHabitCount() {
         habitCount += 1
@@ -24,8 +28,8 @@ class Tag {
         habitCount -= 1
     }
     
-    init(name: String) {
-        self.name = name
+    init(value: Int) {
+        self.value = value
         self.habitCount = 1
         
         self.createdAt = .today

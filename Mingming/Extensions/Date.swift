@@ -8,6 +8,11 @@
 import Foundation
 
 extension Date {
+    static var today: Date {
+//         For testing purposes remove the comment bellow:
+//        return Calendar.current.date(byAdding: .year, value: 1, to: .now)!
+        return .now
+    }
     
     var tomorrow: Date {
         Calendar.current.date(byAdding: .day, value: 1, to: self) ?? self
@@ -21,22 +26,10 @@ extension Date {
         Calendar.current.dateComponents([.hour, .minute], from: self)
     }
     
-    static func firstAndLastDate(of year: String?) -> (firstDate: Date, lastDate: Date)? {
-        guard let year else { return nil }
-        guard let yearInt = Int(year) else { return nil }
-        
-        let calendar = Calendar.current
-        
-        var firstDateComponents = DateComponents(year: yearInt, month: 1, day: 1, hour: 0, minute: 0, second: 0)
-        guard let firstDate = calendar.date(from: firstDateComponents) else { return nil }
-        
-        var lastDateComponents = DateComponents(year: yearInt, month: 12, day: 31, hour: 23, minute: 59, second: 59)
-        guard let lastDate = calendar.date(from: lastDateComponents) else { return nil }
-        
-        
-        return (firstDate, lastDate)
+    var year: Int {
+        Calendar.current.component(.year, from: self)
     }
-    
+   
     static func weekAndDaysInAYear(year: Int, startMonth: Int = 1, showNextYear: Bool = true, maxMonth: Int? = nil) -> [[[Date]]] {
         var result: [[[Date]]] = []
         var savePreviousLastWeek: [Date] = []

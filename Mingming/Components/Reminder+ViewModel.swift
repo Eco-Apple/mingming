@@ -32,16 +32,16 @@ extension Reminder {
         }
         
         func later() {
-            let laterDate = Calendar.current.date(byAdding: .minute, value: 10, to: .now)!
+            let laterDate = Calendar.current.date(byAdding: .minute, value: 10, to: .today)!
             updateCommit(with: .later(laterDate))
             NotificationHelper.addNotification(id: "\(String(describing: habit.id))_late", title: habit.title, body: habit.combineTags, date: laterDate)
         }
         
         private func updateCommit(with status: CommitStatus) {
-            if let lastCommit = habit.commits.last, lastCommit.date.startOfDay == Date.now.startOfDay {
+            if let lastCommit = habit.commits.last, lastCommit.date.startOfDay == Date.today.startOfDay {
                 lastCommit.update(status: status)
             } else {
-                habit.commits.append(Commit(date: .now, status: status))
+                habit.commits.append(Commit(date: .today, status: status))
             }
             
             onRemove()

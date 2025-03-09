@@ -12,7 +12,9 @@ import SwiftData
 class Habit: Equatable {
     private(set) var title: String
     @Relationship(deleteRule: .cascade) var commits: [Commit]
+    
     var tags: [Tag]
+    var year: Year
     var schedules: [Date]
     
     private(set) var createdAt: Date
@@ -34,9 +36,11 @@ class Habit: Equatable {
         self.tags = tags
         self.schedules = schedules
         
-        self.createdAt = .now
-        self.updatedAt = .now
+        self.createdAt = .today
+        self.updatedAt = .today
         self.listOrder = 0
+        
+        self.year = Year(value: Date.today.year)
     }
     
     static func == (lhs: Habit, rhs: Habit) -> Bool {
@@ -45,5 +49,5 @@ class Habit: Equatable {
 }
 
 extension Habit {
-    static var example = Habit(title: "Drink water", schedules: [.now], tags: [Tag(name: "Exercise")], commits: [])
+    static var example = Habit(title: "Drink water", schedules: [.today], tags: [Tag(name: "Exercise")], commits: [])
 }

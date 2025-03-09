@@ -18,18 +18,14 @@ class DataService {
     
     @MainActor
     private init() {
-        container = try! ModelContainer(for: Habit.self, Commit.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: false))
+        container = try! ModelContainer(for: Habit.self, Commit.self, Tag.self, Year.self, configurations: ModelConfiguration(isStoredInMemoryOnly: false))
         context = container.mainContext
     }
     
-    func get(tagNames: [String] = [], year: String? = nil) -> Result<[Habit], Error> {
+    func get(tagNames: [String] = [], year: Int? = nil) -> Result<[Habit], Error> {
         do {
-            let firstAndLastDate = year != nil ? Date.firstAndLastDate(of: year!) : nil
-            let firstDate = firstAndLastDate?.0
-            let lastDate = firstAndLastDate?.1
-            
-           let predicate: Predicate<Habit>? = #Predicate { habit in
-               (tagNames.isEmpty || tagNames.contains("All") || habit.tags.contains { tag in tagNames.contains(tag.name) }) && ( firstDate == nil || lastDate == nil || habit.createdAt >= firstDate! && habit.createdAt <= lastDate!)
+            let predicate: Predicate<Habit>? = #Predicate { habit in
+                (tagNames.isEmpty || tagNames.contains("All") || habit.tags.contains { tag in tagNames.contains(tag.name) }) && (year == nil || habit.year.value == year!)
             }
             
             let descriptor = FetchDescriptor<Habit>(predicate: predicate, sortBy: [SortDescriptor(\Habit.listOrder)])
@@ -42,19 +38,19 @@ class DataService {
         }
     }
     
-    func get() -> Result<[Tag], Error> {
+    func get<T: PersistentModel>() -> Result<[T], Error> {
         do {
-            let descriptor = FetchDescriptor<Tag>()
+            let descriptor = FetchDescriptor<T>()
             
-            let tags = try context.fetch(descriptor)
+            let results = try context.fetch(descriptor)
             
-            return .success(tags)
+            return .success(results)
         } catch {
             return .failure(error)
         }
     }
     
-    func add(habit: Habit) async -> Result<(Habit, [Tag]), Error> {
+    func add(habit: Habit) async -> Result<(Habit, [Tag], Year), Error> {
         do {
             let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
             
@@ -62,38 +58,34 @@ class DataService {
                 return .failure(NSError(domain: "NotificationPermission", code: 1, userInfo: [NSLocalizedDescriptionKey: "User denied notification permission."]))
             }
             
-            var newTags = [Tag]()
-            var allTags = [Tag]()
-            
-            for tag in habit.tags {
-                let result = add(tag: tag)
-                
-                switch result {
-                case .success(let tag):
-                    newTags.append(tag)
-                    allTags.append(tag)
-                case .failure(let error):
-                    if let error = error as? DataService.TagExist {
-                        if !allTags.contains(where: { $0 == error.tag }) {
-                            error.tag.increaseHabitCount()
-                            allTags.append(error.tag)
-                        }
-                    } else {
-                        debugPrint(error.localizedDescription)
-                    }
-                }
-            }
-            
-            habit.tags = allTags
+            let tags = addTagFilter(habit)
+            let year = addYearFilter(habit)
             
             context.insert(habit)
             try context.save()
             
             NotificationHelper.addNotification(id: String(describing: habit.id), title: habit.title, body: habit.combineTags, date: habit.schedule, repeats: true)
             
-            return .success((habit, newTags))
+            return .success((habit, tags, year))
             
             
+        } catch {
+            return .failure(error)
+        }
+    }
+    
+    func add(year: Year) -> Result<Year, Error> {
+        do {
+            let allYears = try context.fetch(FetchDescriptor<Year>())
+            
+            if let year = allYears.first(where: { $0.value == year.value }) {
+                return .failure(YearExist(year: year))
+            } else {
+                context.insert(year)
+                try context.save()
+                
+                return .success(year)
+            }
         } catch {
             return .failure(error)
         }
@@ -116,49 +108,132 @@ class DataService {
         }
     }
     
-    func delete(_ habit: Habit) -> Result<(Habit, [Tag]), Error> {
+    func delete(_ habit: Habit) -> Result<(Habit, [Tag], Year), Error> {
         do {
-            var deletedTags = [Tag]()
             
-            for tag in habit.tags {
-                if tag.habitCount <= 1 {
-                    let result = delete(tag)
-                    switch result {
-                    case .success(let tag):
-                        deletedTags.append(tag)
-                    case .failure(let error):
-                        fatalError(error.localizedDescription)
-                    }
-                } else {
-                    tag.decreaseHabitCount()
-                }
-            }
+            let tags = deleteTagFilter(habit)
+            let year = deleteYearFilter(habit)
             
             context.delete(habit)
             try context.save()
             
             NotificationHelper.deleteNotification(id: String(describing: habit.id))
             
-            return .success((habit, deletedTags))
+            return .success((habit, tags, year))
         } catch {
             return .failure(error)
         }
     }
     
-    func delete(_ tag: Tag) -> Result<Tag, Error> {
+    func delete<T: PersistentModel>(_ data: T) -> Result<T, Error> {
         do {
-            context.delete(tag)
+            context.delete(data)
             try context.save()
             
-            return .success(tag)
+            return .success(data)
         } catch {
             return .failure(error)
         }
+    }
+    
+    private func deleteYearFilter(_ habit: Habit) -> Year {
+        var resultYear = habit.year
+        
+        if resultYear.habitCount <= 1 {
+            let result: Result<Year, Error> = delete(resultYear)
+            
+            switch result {
+            case .success(let year):
+                resultYear = year
+                debugPrint("Successfully deleted year")
+            case .failure(let error):
+                debugPrint(error.localizedDescription)
+            }
+        } else {
+            resultYear.decreaseHabitCount()
+        }
+        
+        return resultYear
+    }
+    
+    private func deleteTagFilter(_ habit: Habit) -> [Tag] {
+        var deletedTags = [Tag]()
+        
+        for tag in habit.tags {
+            if tag.habitCount <= 1 {
+                let result: Result<Tag, Error> = delete(tag)
+                
+                switch result {
+                case .success(let tag):
+                    deletedTags.append(tag)
+                case .failure(let error):
+                    debugPrint(error.localizedDescription)
+                }
+            } else {
+                tag.decreaseHabitCount()
+            }
+        }
+        
+        return deletedTags
+    }
+    
+    private func addTagFilter(_ habit: Habit) -> [Tag] {
+        var newTags = [Tag]()
+        var allTags = [Tag]()
+        
+        for tag in habit.tags {
+            let result = add(tag: tag)
+            
+            switch result {
+            case .success(let tag):
+                newTags.append(tag)
+                allTags.append(tag)
+            case .failure(let error):
+                if let error = error as? DataService.TagExist {
+                    if !allTags.contains(where: { $0 == error.tag }) {
+                        error.tag.increaseHabitCount()
+                        allTags.append(error.tag)
+                    }
+                } else {
+                    debugPrint(error.localizedDescription)
+                }
+            }
+        }
+        
+        habit.tags = allTags
+        
+        return newTags
+    }
+    
+    private func addYearFilter(_ habit: Habit) -> Year {
+        var resultYear: Year = habit.year
+        let result = add(year: habit.year)
+        
+        switch result {
+        case .success(let year):
+            resultYear = year
+            debugPrint("Successfully added year as filter")
+        case .failure(let error):
+            if let error = error as? DataService.YearExist {
+                error.year.increaseHabitCount()
+                resultYear = error.year
+            } else {
+                debugPrint(error.localizedDescription)
+            }
+        }
+        
+        habit.year = resultYear
+        
+        return resultYear
     }
 }
 
 extension DataService {
     struct TagExist: Error {
         let tag: Tag
+    }
+    
+    struct YearExist: Error {
+        let year: Year
     }
 }

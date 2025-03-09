@@ -15,7 +15,7 @@ extension Add {
         var time: String = ""
         
         var showTimePicker: Bool = false
-        var selectedTime: Date = Date()
+        var selectedTime: Date = .today
         
         var dataService: DataService
         

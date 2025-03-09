@@ -26,9 +26,9 @@ extension Home {
         
         var dataService: DataService
         
-        var years: [String] = ["2024", "2025"]
-        var selectedYear: String = "All"
+        var years: [Year] = []
         
+        var selectedYear: String = "All"
         var selectedTagNames: [String] = ["All"]
         
         init(dataService: DataService) {
@@ -76,9 +76,10 @@ extension Home {
                 let result = dataService.delete(habit)
                 
                 switch result {
-                case .success(let (habit, tags)):
+                case .success(let (habit, tags, year)):
                     habits.removeAll { $0 == habit }
                     self.tags.removeAll { tags.contains($0) }
+                    self.years.removeAll { $0 == year }
                     
                     WidgetCenter.shared.reloadAllTimelines()
                 case .failure(let error):
@@ -98,9 +99,10 @@ extension Home {
             let result = await dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: add.tags.toTags(), commits: []))
             
             switch result {
-            case .success(let (habits, tags)):
+            case .success(let (habits, tags, year)):
                 self.habits.append(habits)
                 self.tags.append(contentsOf: tags)
+                self.years.append(year)
                 
                 WidgetCenter.shared.reloadAllTimelines()
             case .failure(let error):
@@ -119,7 +121,7 @@ extension Home {
         }
         
         private func filterHabits() {
-            let result: Result<[Habit], Error> = self.dataService.get(tagNames: selectedTagNames, year: selectedYear)
+            let result: Result<[Habit], Error> = self.dataService.get(tagNames: selectedTagNames, year: Int(selectedYear))
             
             switch result {
             case .success(let habits):
@@ -149,16 +151,25 @@ extension Home {
             case .failure(let error):
                 fatalError(error.localizedDescription)
             }
+            
+            let yearResult: Result<[Year], Error> = self.dataService.get()
+            
+            switch yearResult {
+            case .success(let years):
+                self.years = years
+            case .failure(let error):
+                fatalError(error.localizedDescription)
+            }
         }
         
         private func checkReminder(habits: [Habit]) {
             for habit in habits {
                 if let lastCommit = habit.commits.last {
-                    if lastCommit.date.startOfDay < Date.now.startOfDay {
+                    if lastCommit.date.startOfDay < Date.today.startOfDay {
                         checkTime(habit.schedule) {
                             self.showReminder(habit)
                         }
-                    } else if lastCommit.date.startOfDay == Date.now.startOfDay {
+                    } else if lastCommit.date.startOfDay == Date.today.startOfDay {
                         switch lastCommit.status {
                         case .later(let date):
                             checkTime(date) {
@@ -182,7 +193,7 @@ extension Home {
         
         private func checkTime(_ date: Date, completion: @escaping () -> Void) {
             let time = date.time
-            let todayTime = Date.now.time
+            let todayTime = Date.today.time
             
             if todayTime.hour! > time.hour! {
                 completion()
@@ -209,7 +220,7 @@ extension Home {
                     }
                     
                     // Will check if there's a gap between last commit date and todays date.
-                    if let yesterday = Date.now.startOfDay.addDay(-1) {
+                    if let yesterday = Date.today.startOfDay.addDay(-1) {
                         if let daysBetween = lastCommit.date.startOfDay.daysBetween(this: yesterday), daysBetween > 0 {
                             let lastCommitDate = lastCommit.date
                             for index in 1...daysBetween {

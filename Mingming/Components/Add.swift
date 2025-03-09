@@ -26,7 +26,7 @@ struct Add: View {
                             }
                             .onChange(of: viewModel.showTimePicker) {
                                 if viewModel.time.isEmpty {
-                                    viewModel.time = Date.now.formatTime()
+                                    viewModel.time = Date.today.formatTime()
                                 }
                             }
                         

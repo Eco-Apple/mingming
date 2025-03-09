@@ -76,6 +76,7 @@
 				Models/Commit.swift,
 				Models/Habit.swift,
 				Models/Tag.swift,
+				Models/Year.swift,
 			);
 			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
 		};

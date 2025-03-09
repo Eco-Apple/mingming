@@ -10,11 +10,11 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(habits: [.example], date: Date())
+        SimpleEntry(habits: [.example], date: Date.today)
     }
     
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(habits: [.example], date: Date())
+        let entry = SimpleEntry(habits: [.example], date: Date.today)
         completion(entry)
     }
     
@@ -28,7 +28,7 @@ struct Provider: TimelineProvider {
             case .success(let habits):
                 var entries: [SimpleEntry] = []
                 
-                let currentDate = Date()
+                let currentDate = Date.today
                 for hourOffset in 0 ..< 5 {
                     let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
                     
@@ -69,7 +69,7 @@ struct HabitCommitsEntryView : View {
     
     var previousMonthNumber: Int {
         let calendar = Calendar.current
-        let currentDate = Date()
+        let currentDate = Date.today
         
         let previousMonthDate = calendar.date(byAdding: .month, value: -2, to: currentDate)!
         return calendar.component(.month, from: previousMonthDate)
@@ -159,5 +159,5 @@ struct HabitCommits: Widget {
 #Preview(as: .systemSmall) {
     HabitCommits()
 } timeline: {
-    SimpleEntry(habits: [.example], date: Date())
+    SimpleEntry(habits: [.example], date: Date.today)
 }

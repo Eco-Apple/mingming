@@ -18,15 +18,15 @@ class Commit {
     
     func update(status: CommitStatus) {
         self.status = status
-        updatedAt = .now
+        updatedAt = .today
     }
     
     init(date: Date, status: CommitStatus) {
         self.status = status
         self.date = date
         
-        self.createdAt = .now
-        self.updatedAt = .now
+        self.createdAt = .today
+        self.updatedAt = .today
     }
 }
 

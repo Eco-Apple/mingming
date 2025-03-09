@@ -39,7 +39,9 @@ struct Home: View {
                         .padding(.top, 12)
                         .padding(.horizontal, 12)
                         .onAppear {
-                            proxy.scrollTo("all")
+                            DispatchQueue.main.async {
+                                proxy.scrollTo("all")
+                            }
                         }
                     }
                 }
@@ -61,13 +63,15 @@ struct Home: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .center, spacing: 4.0) {
-                    ForEach(viewModel.years, id: \.self) { year in
-                        FilterButton(year, isActive: viewModel.selectedYear == year) {
-                            viewModel.selectYear(year)
+                    if !viewModel.years.isEmpty {
+                        ForEach(viewModel.years) { year in
+                            FilterButton(year.stringValue, isActive: viewModel.selectedYear == year.stringValue) {
+                                viewModel.selectYear(year.stringValue)
+                            }
                         }
-                    }
-                    FilterButton("All", isActive: viewModel.selectedYear == "All") {
-                        viewModel.selectedYear = "All"
+                        FilterButton("All", isActive: viewModel.selectedYear == "All") {
+                            viewModel.selectedYear = "All"
+                        }
                     }
                 }
                 .padding(0.5)
