@@ -11,6 +11,7 @@ extension Date {
     static var today: Date {
 //         For testing purposes remove the comment bellow:
 //        return Calendar.current.date(byAdding: .year, value: 1, to: .now)!
+//        return Calendar.current.date(byAdding: .day, value: 7, to: .now)!
         return .now
     }
     
@@ -29,7 +30,16 @@ extension Date {
     var year: Int {
         Calendar.current.component(.year, from: self)
     }
-   
+    
+    var localTimeZone: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.timeZone = .current
+
+        let localDateString = formatter.string(from: self)
+        return localDateString
+    }
+    
     static func weekAndDaysInAYear(year: Int, startMonth: Int = 1, showNextYear: Bool = true, maxMonth: Int? = nil) -> [[[Date]]] {
         var result: [[[Date]]] = []
         var savePreviousLastWeek: [Date] = []
@@ -135,7 +145,7 @@ extension Date {
         
         return components.day
     }
-   
+    
     func formatTime() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mma"

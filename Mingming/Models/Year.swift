@@ -13,8 +13,8 @@ class Year {
     @Attribute(.unique) var value: Int
     private(set) var habitCount: Int
     
-    var createdAt: Date
-    var updatedAt: Date
+    private(set) var createdAt: Date
+    private(set) var updatedAt: Date
     
     var stringValue: String {
         String(value)

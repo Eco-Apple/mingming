@@ -13,8 +13,8 @@ class Tag {
     @Attribute(.unique) var name: String
     private(set) var habitCount: Int
     
-    var createdAt: Date
-    var updatedAt: Date
+    private(set) var createdAt: Date
+    private(set) var updatedAt: Date
     
     func increaseHabitCount() {
         habitCount += 1

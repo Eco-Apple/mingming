@@ -214,6 +214,7 @@ extension Home {
         
         private func checkForgottenHabits(habits: [Habit]) {
             for habit in habits {
+                debugPrintCommits(habit)
                 if let lastCommit = habit.commits.last {
                     if case .later(let date) = lastCommit.status {
                         lastCommit.update(status: .forgotten)
@@ -225,12 +226,23 @@ extension Home {
                             let lastCommitDate = lastCommit.date
                             for index in 1...daysBetween {
                                 if let newDate = lastCommitDate.startOfDay.addDay(index){
-                                    habit.commits.append(Commit(date: newDate, status: .forgotten))
+                                    habit.add(commit: Commit(date: newDate, status: .forgotten), dataService: dataService)
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+        
+        private func debugPrintCommits(_ habit: Habit) {
+            debugPrint(habit.title)
+            debugPrint("Today: \(Date.today.localTimeZone)")
+            debugPrint("Total commits: \(habit.commits.count)")
+            for commit in habit.commits {
+                debugPrint("==========")
+                debugPrint(commit.date.localTimeZone)
+                debugPrint(commit.status)
             }
         }
     }

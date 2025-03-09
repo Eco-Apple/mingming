@@ -22,6 +22,14 @@ class DataService {
         context = container.mainContext
     }
     
+    func save() {
+        do {
+            try context.save()
+        } catch {
+            debugPrint(error.localizedDescription)
+        }
+    }
+    
     func get(tagNames: [String] = [], year: Int? = nil) -> Result<[Habit], Error> {
         do {
             let predicate: Predicate<Habit>? = #Predicate { habit in
@@ -200,7 +208,7 @@ class DataService {
             }
         }
         
-        habit.tags = allTags
+        habit.set(tags: allTags, dataService: self)
         
         return newTags
     }
@@ -222,7 +230,7 @@ class DataService {
             }
         }
         
-        habit.year = resultYear
+        habit.set(year: resultYear, dataService: self)
         
         return resultYear
     }

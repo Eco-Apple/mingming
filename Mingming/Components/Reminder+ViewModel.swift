@@ -41,7 +41,7 @@ extension Reminder {
             if let lastCommit = habit.commits.last, lastCommit.date.startOfDay == Date.today.startOfDay {
                 lastCommit.update(status: status)
             } else {
-                habit.commits.append(Commit(date: .today, status: status))
+                habit.add(commit: Commit(date: .today, status: status), dataService: dataService)
             }
             
             onRemove()

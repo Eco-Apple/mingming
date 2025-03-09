@@ -11,11 +11,11 @@ import SwiftData
 @Model
 class Habit: Equatable {
     private(set) var title: String
-    @Relationship(deleteRule: .cascade) var commits: [Commit]
+    @Relationship(deleteRule: .cascade) private(set) var commits: [Commit]
     
-    var tags: [Tag]
-    var year: Year
-    var schedules: [Date]
+    private(set) var tags: [Tag]
+    private(set) var year: Year
+    private(set) var schedules: [Date]
     
     private(set) var createdAt: Date
     private(set) var updatedAt: Date
@@ -41,6 +41,21 @@ class Habit: Equatable {
         self.listOrder = 0
         
         self.year = Year(value: Date.today.year)
+    }
+    
+    func add(commit: Commit, dataService: DataService) {
+        commits.append(commit)
+        dataService.save()
+    }
+    
+    func set(tags: [Tag], dataService: DataService) {
+        self.tags = tags
+        dataService.save()
+    }
+    
+    func set(year: Year, dataService: DataService) {
+        self.year = year
+        dataService.save()
     }
     
     static func == (lhs: Habit, rhs: Habit) -> Bool {
