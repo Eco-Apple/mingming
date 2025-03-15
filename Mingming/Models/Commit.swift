@@ -16,9 +16,10 @@ class Commit {
     private var createdAt: Date
     private var updatedAt: Date
     
-    func update(status: CommitStatus) {
+    func update(status: CommitStatus, dataService: DataService) {
         self.status = status
         updatedAt = .today
+        dataService.save()
     }
     
     init(date: Date, status: CommitStatus) {

@@ -12,6 +12,8 @@ extension Date {
 //         For testing purposes remove the comment bellow:
 //        return Calendar.current.date(byAdding: .year, value: 1, to: .now)!
 //        return Calendar.current.date(byAdding: .day, value: 7, to: .now)!
+//        return Calendar.current.date(byAdding: .day, value: 2, to: .now)!
+//        return Calendar.current.date(byAdding: .day, value: 1, to: .now)!
         return .now
     }
     

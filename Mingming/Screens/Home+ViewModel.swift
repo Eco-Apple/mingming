@@ -217,17 +217,17 @@ extension Home {
                 debugPrintCommits(habit)
                 if let lastCommit = habit.commits.last {
                     if case .later(let date) = lastCommit.status {
-                        lastCommit.update(status: .forgotten)
+                        if let daysBetween = date.startOfDay.daysBetween(this: .today.startOfDay), daysBetween > 0 {
+                            lastCommit.update(status: .forgotten, dataService: dataService)
+                        }
                     }
                     
-                    // Will check if there's a gap between last commit date and todays date.
-                    if let yesterday = Date.today.startOfDay.addDay(-1) {
-                        if let daysBetween = lastCommit.date.startOfDay.daysBetween(this: yesterday), daysBetween > 0 {
-                            let lastCommitDate = lastCommit.date
-                            for index in 1...daysBetween {
-                                if let newDate = lastCommitDate.startOfDay.addDay(index){
-                                    habit.add(commit: Commit(date: newDate, status: .forgotten), dataService: dataService)
-                                }
+                    if let daysBetween = lastCommit.date.startOfDay.daysBetween(this: .today), daysBetween > 1 {
+                        let lastCommitDate = lastCommit.date
+                        
+                        for index in 1...(daysBetween - 1) {
+                            if let newDate = lastCommitDate.startOfDay.addDay(index) {
+                                habit.add(commit: Commit(date: newDate, status: .forgotten), dataService: dataService)
                             }
                         }
                     }

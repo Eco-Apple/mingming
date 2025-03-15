@@ -39,7 +39,7 @@ extension Reminder {
         
         private func updateCommit(with status: CommitStatus) {
             if let lastCommit = habit.commits.last, lastCommit.date.startOfDay == Date.today.startOfDay {
-                lastCommit.update(status: status)
+                lastCommit.update(status: status, dataService: dataService)
             } else {
                 habit.add(commit: Commit(date: .today, status: status), dataService: dataService)
             }
