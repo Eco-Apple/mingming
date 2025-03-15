@@ -32,8 +32,12 @@ class DataService {
     
     func get(tagNames: [String] = [], year: Int? = nil) -> Result<[Habit], Error> {
         do {
+            let calendar = Calendar.current
+            let startOfYear = calendar.date(from: DateComponents(year: year, month: 1, day: 1))!
+            let endOfYear = calendar.date(byAdding: DateComponents(year: 1, second: -1), to: startOfYear)!
+            
             let predicate: Predicate<Habit>? = #Predicate { habit in
-                (tagNames.isEmpty || tagNames.contains("All") || habit.tags.contains { tag in tagNames.contains(tag.name) }) && (year == nil || habit.year.value == year!)
+                (tagNames.isEmpty || tagNames.contains("All") || habit.tags.contains { tag in tagNames.contains(tag.name) }) && (year == nil || habit.createdAt >= startOfYear && habit.createdAt <= endOfYear)
             }
             
             let descriptor = FetchDescriptor<Habit>(predicate: predicate, sortBy: [SortDescriptor(\Habit.listOrder)])
@@ -58,7 +62,7 @@ class DataService {
         }
     }
     
-    func add(habit: Habit) async -> Result<(Habit, [Tag], Year), Error> {
+    func add(habit: Habit) async -> Result<(Habit, [Tag], Year?), Error> {
         do {
             let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
             
@@ -145,7 +149,7 @@ class DataService {
     }
     
     private func deleteYearFilter(_ habit: Habit) -> Year {
-        var resultYear = habit.year
+        var resultYear = habit.year!
         
         if resultYear.habitCount <= 1 {
             let result: Result<Year, Error> = delete(resultYear)
@@ -213,24 +217,27 @@ class DataService {
         return newTags
     }
     
-    private func addYearFilter(_ habit: Habit) -> Year {
-        var resultYear: Year = habit.year
-        let result = add(year: habit.year)
+    private func addYearFilter(_ habit: Habit) -> Year? {
+        var resultYear: Year?
+        var newYear: Year = Year(value: habit.createdAt.year)
+        let result = add(year: newYear)
         
         switch result {
         case .success(let year):
-            resultYear = year
             debugPrint("Successfully added year as filter")
+            newYear = year
+            resultYear = year
         case .failure(let error):
             if let error = error as? DataService.YearExist {
                 error.year.increaseHabitCount()
-                resultYear = error.year
+                newYear = error.year
+                resultYear = nil
             } else {
                 debugPrint(error.localizedDescription)
             }
         }
         
-        habit.set(year: resultYear, dataService: self)
+        habit.set(year: newYear, dataService: self)
         
         return resultYear
     }

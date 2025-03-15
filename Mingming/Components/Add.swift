@@ -21,6 +21,7 @@ struct Add: View {
                         TextField("4:30 PM", text: $viewModel.time)
                             .customize(label: "Title")
                             .frame(width: 72)
+                            .disabled(true)
                             .onChange(of: viewModel.selectedTime) {
                                 viewModel.time = viewModel.selectedTime.formatTime()
                             }

@@ -16,18 +16,18 @@ class Commit {
     private var createdAt: Date
     private var updatedAt: Date
     
-    func update(status: CommitStatus, dataService: DataService) {
-        self.status = status
-        updatedAt = .today
-        dataService.save()
-    }
-    
     init(date: Date, status: CommitStatus) {
         self.status = status
         self.date = date
         
         self.createdAt = .today
         self.updatedAt = .today
+    }
+    
+    func update(status: CommitStatus, dataService: DataService) {
+        self.status = status
+        updatedAt = .today
+        dataService.save()
     }
 }
 

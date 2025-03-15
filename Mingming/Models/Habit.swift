@@ -14,7 +14,7 @@ class Habit: Equatable {
     @Relationship(deleteRule: .cascade) private(set) var commits: [Commit]
     
     private(set) var tags: [Tag]
-    private(set) var year: Year
+    private(set) var year: Year?
     private(set) var schedules: [Date]
     
     private(set) var createdAt: Date
@@ -32,15 +32,14 @@ class Habit: Equatable {
     
     init(title: String, schedules: [Date], tags: [Tag], commits: [Commit]) {
         self.title = title
-        self.commits = commits
-        self.tags = tags
+        
         self.schedules = schedules
+        self.tags = tags
+        self.commits = commits
         
         self.createdAt = .today
         self.updatedAt = .today
         self.listOrder = 0
-        
-        self.year = Year(value: Date.today.year)
     }
     
     func add(commit: Commit, dataService: DataService) {

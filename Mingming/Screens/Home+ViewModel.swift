@@ -102,12 +102,16 @@ extension Home {
             case .success(let (habits, tags, year)):
                 self.habits.append(habits)
                 self.tags.append(contentsOf: tags)
-                self.years.append(year)
+                
+                if let year {
+                    self.years.append(year)
+                }
                 
                 WidgetCenter.shared.reloadAllTimelines()
             case .failure(let error):
                 debugPrint(error.localizedDescription)
             }
+            
             isAddPresented = false
             add.reset()
         }
