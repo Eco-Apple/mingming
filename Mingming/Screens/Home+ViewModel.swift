@@ -96,6 +96,8 @@ extension Home {
         }
         
         func onAdd() async {
+            isAddPresented = false
+            
             let result = await dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: add.tags.toTags(), commits: []))
             
             switch result {
@@ -112,7 +114,6 @@ extension Home {
                 debugPrint(error.localizedDescription)
             }
             
-            isAddPresented = false
             add.reset()
         }
         
