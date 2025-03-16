@@ -43,9 +43,28 @@ struct HabitTile: View {
                                     ForEach(Array(month.enumerated()), id: \.offset) { index, week in
                                         VStack(spacing: 2) {
                                             ForEach(Array(week.enumerated()), id: \.offset) { index, day in
-                                                Rectangle()
-                                                    .fill(day.isIn(habit.commits) ? .do : .notDo)
-                                                    .frame(width: 8, height: 8)
+                                                ZStack {
+                                                    RoundedRectangle(cornerRadius: day.isDateInToday ? 8 : 2)
+                                                        .fill(day.isIn(habit.commits) ? .do : day.isDateInToday ? .white : .notDo)
+                                                        .frame(width: 8, height: 8)
+                                                        .overlay(
+                                                            Group {
+                                                                if day.isDateInToday {
+                                                                    RoundedRectangle(cornerRadius: 8)
+                                                                        .stroke(day.isIn(habit.commits) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
+                                                                }
+                                                            }
+                                                        )
+                                                    
+                                                    if !day.isDateInToday && !day.isIn(habit.commits) && day.isFirstDayOfTheMonth {
+                                                        RoundedRectangle(cornerRadius: 2)
+                                                            .fill(.notDo)
+                                                            .frame(width: 8, height: 8)
+                                                        RoundedRectangle(cornerRadius: 2)
+                                                            .fill(.notDo)
+                                                            .frame(width: 8, height: 8)
+                                                    }
+                                                }
                                             }
                                         }
                                     }

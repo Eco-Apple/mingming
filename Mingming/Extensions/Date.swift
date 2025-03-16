@@ -17,6 +17,14 @@ extension Date {
         return .now
     }
     
+    var isFirstDayOfTheMonth: Bool {
+        Calendar.current.component(.day, from: self) == 1
+    }
+    
+    var isDateInToday: Bool {
+        Calendar.current.isDateInToday(self)
+    }
+    
     var tomorrow: Date {
         Calendar.current.date(byAdding: .day, value: 1, to: self) ?? self
     }
