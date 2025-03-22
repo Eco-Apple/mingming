@@ -8,6 +8,13 @@
 import Foundation
 import SwiftData
 
+enum CommitStatus: Codable, Equatable {
+    case completed
+    case skippedManually
+    case forgotten
+    case later(Date)
+}
+
 @Model
 class Commit {
     private(set) var status: CommitStatus
@@ -31,9 +38,23 @@ class Commit {
     }
 }
 
-enum CommitStatus: Codable, Equatable {
-    case completed
-    case skippedManually
-    case forgotten
-    case later(Date)
+extension [Commit] {
+    func isIn(_ date: Date) -> Bool {
+        return self.contains { $0.status == .completed && Calendar.current.isDate($0.date, inSameDayAs: date)}
+    }
+}
+
+extension CommitStatus {
+    var asWidgetCommitStatus: WidgetCommitStatus {
+        switch self {
+        case .completed:
+            return .completed
+        case .skippedManually:
+            return .skippedManually
+        case .forgotten:
+            return .forgotten
+        case .later(let date):
+            return .later(date)
+        }
+    }
 }

@@ -42,13 +42,18 @@ extension Home {
         
         func selectYear(_ year: String) {
             selectedYear = year
-            filterHabits()
+            
+            Task(priority: .background) {
+                await filterHabits()
+            }
         }
         
         func selectTagName(_ name: String) {
             guard name != "All" else {
                 selectedTagNames = ["All"]
-                filterHabits()
+                Task {
+                    await filterHabits()
+                }
                 return
             }
             
@@ -66,7 +71,9 @@ extension Home {
                 selectedTagNames = ["All"]
             }
             
-            filterHabits()
+            Task {
+                await filterHabits()
+            }
         }
         
         func deleteButtonCallback(isDelete: Bool) {
@@ -125,7 +132,7 @@ extension Home {
             }
         }
         
-        private func filterHabits() {
+        private func filterHabits() async {
             let result: Result<[Habit], Error> = self.dataService.get(tagNames: selectedTagNames, year: Int(selectedYear))
             
             switch result {
@@ -137,17 +144,6 @@ extension Home {
         }
         
         private func fetchHabits() {
-            let habitResult: Result<[Habit], Error> = self.dataService.get()
-            
-            switch habitResult {
-            case .success(let habits):
-                self.habits = habits
-                checkReminder(habits: habits)
-                checkForgottenHabits(habits: habits)
-            case .failure(let error):
-                debugPrint(error.localizedDescription)
-            }
-            
             let tagResult: Result<[Tag], Error> = self.dataService.get()
             
             switch tagResult {
@@ -164,6 +160,17 @@ extension Home {
                 self.years = years
             case .failure(let error):
                 fatalError(error.localizedDescription)
+            }
+            
+            let habitResult: Result<[Habit], Error> = self.dataService.get()
+            
+            switch habitResult {
+            case .success(let habits):
+                self.habits = habits
+                checkReminder(habits: habits)
+                checkForgottenHabits(habits: habits)
+            case .failure(let error):
+                debugPrint(error.localizedDescription)
             }
         }
         
@@ -238,16 +245,38 @@ extension Home {
                     }
                 }
             }
+            
+            prepareWidgetData(habits: habits)
         }
         
         private func debugPrintCommits(_ habit: Habit) {
             debugPrint(habit.title)
             debugPrint("Today: \(Date.today.localTimeZone)")
             debugPrint("Total commits: \(habit.commits.count)")
-            for commit in habit.commits {
-                debugPrint("==========")
-                debugPrint(commit.date.localTimeZone)
-                debugPrint(commit.status)
+//            debugPrint("\(habit.commits.first?.date.localTimeZone) :: \(habit.commits.last?.date.localTimeZone)")
+            //            for commit in habit.commits {
+            //                debugPrint("==========")
+            //                debugPrint(commit.date.localTimeZone)
+            //                debugPrint(commit.status)
+            //            }
+        }
+        
+        private func prepareWidgetData(habits: [Habit]) {
+            let habitSummaries = habits.map { habit in
+                let widgetCommit = habit.commits.map { commit in
+                    WidgetCommit(id: commit.id, date: commit.date, status: commit.status.asWidgetCommitStatus)
+                }
+                
+                let widgetTag = habit.tags.map { tag in
+                    WidgetTag(id: tag.id, name: tag.name, habitCount: tag.habitCount)
+                }
+                
+                return WidgetHabit(id: habit.id, title: habit.title, schedules: habit.schedules, commits: widgetCommit, tags: widgetTag)
+            }
+            
+            if let data = try? JSONEncoder().encode(habitSummaries) {
+                let defaults = UserDefaults(suiteName: "group.ecovillaraza.Mingming")!
+                defaults.set(data, forKey: "habitWidgetData")
             }
         }
     }

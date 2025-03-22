@@ -45,18 +45,18 @@ struct HabitTile: View {
                                             ForEach(Array(week.enumerated()), id: \.offset) { index, day in
                                                 ZStack {
                                                     RoundedRectangle(cornerRadius: day.isDateInToday ? 8 : 2)
-                                                        .fill(day.isIn(habit.commits) ? .do : day.isDateInToday ? .white : .notDo)
+                                                        .fill(habit.commits.isIn(day) ? .do : day.isDateInToday ? .white : .notDo)
                                                         .frame(width: 8, height: 8)
                                                         .overlay(
                                                             Group {
                                                                 if day.isDateInToday {
                                                                     RoundedRectangle(cornerRadius: 8)
-                                                                        .stroke(day.isIn(habit.commits) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
+                                                                        .stroke(habit.commits.isIn(day) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
                                                                 }
                                                             }
                                                         )
                                                     
-                                                    if !day.isDateInToday && !day.isIn(habit.commits) && day.isFirstDayOfTheMonth {
+                                                    if !day.isDateInToday && !habit.commits.isIn(day) && day.isFirstDayOfTheMonth {
                                                         RoundedRectangle(cornerRadius: 2)
                                                             .fill(.notDo)
                                                             .frame(width: 8, height: 8)

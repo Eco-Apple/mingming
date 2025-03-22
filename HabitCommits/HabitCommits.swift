@@ -10,45 +10,39 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(habits: [.example], date: Date.today)
+        SimpleEntry(habits: [], date: Date.today)
     }
     
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(habits: [.example], date: Date.today)
+        let entry = SimpleEntry(habits: [], date: Date.today)
         completion(entry)
     }
     
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        Task { @MainActor in
-            let dataService = DataService.shared
-            let result: Result<[Habit], Error> = dataService.get()
+        let defaults = UserDefaults(suiteName: "group.ecovillaraza.Mingming")!
+        if let data = defaults.data(forKey: "habitWidgetData"),
+           let habits = try? JSONDecoder().decode([WidgetHabit].self, from: data) {
+            var entries: [SimpleEntry] = []
             
-            switch result {
-            case .success(let habits):
-                var entries: [SimpleEntry] = []
+            let currentDate = Date.today
+            for hourOffset in 0 ..< 5 {
+                let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
                 
-                let currentDate = Date.today
-                for hourOffset in 0 ..< 5 {
-                    let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-                    
-                    let randomHabits: [Habit]
-                    
-                    if context.family == .systemLarge {
-                        randomHabits = Array(habits.prefix(2))
-                    } else {
-                        randomHabits = [habits.randomElement() ?? .example]
-                    }
-                    
-                    let entry = SimpleEntry(habits: randomHabits, date: entryDate)
-                    entries.append(entry)
+                let randomHabits: [WidgetHabit]
+                
+                if context.family == .systemLarge {
+                    randomHabits = Array(habits.prefix(2))
+                } else {
+                    randomHabits = [habits.randomElement()!]
                 }
                 
-                let timeline = Timeline(entries: entries, policy: .atEnd)
-                completion(timeline)
-            case .failure(let error):
-                debugPrint(error)
+                let entry = SimpleEntry(habits: randomHabits, date: entryDate)
+                entries.append(entry)
             }
+            
+            let timeline = Timeline(entries: entries, policy: .atEnd)
+            completion(timeline)
         }
     }
     
@@ -58,7 +52,7 @@ struct Provider: TimelineProvider {
 }
 
 struct SimpleEntry: TimelineEntry {
-    let habits: [Habit]
+    let habits: [WidgetHabit]
     let date: Date
 }
 
@@ -103,7 +97,7 @@ struct HabitCommitsEntryView : View {
                             .font(.system(size: 9, weight: .medium))
                     }
                     HStack {
-                        ForEach(habit.tags, id: \.self) { tag in
+                        ForEach(habit.tags) { tag in
                             Text("#\(tag.name)")
                                 .font(.system(size: 9, weight: .medium))
                         }
@@ -117,9 +111,28 @@ struct HabitCommitsEntryView : View {
                                     ForEach(Array(month.enumerated()), id: \.offset) { index, week in
                                         VStack(spacing: 2) {
                                             ForEach(Array(week.enumerated()), id: \.offset) { index, day in
-                                                Rectangle()
-                                                    .fill(day.isIn(habit.commits) ? .do: .notDo)
-                                                    .frame(width: 8, height: 8)
+                                                ZStack {
+                                                    RoundedRectangle(cornerRadius: day.isDateInToday ? 8 : 2)
+                                                        .fill(habit.commits.isIn(day) ? .do : day.isDateInToday ? .white : .notDo)
+                                                        .frame(width: 8, height: 8)
+                                                        .overlay(
+                                                            Group {
+                                                                if day.isDateInToday {
+                                                                    RoundedRectangle(cornerRadius: 8)
+                                                                        .stroke(habit.commits.isIn(day) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
+                                                                }
+                                                            }
+                                                        )
+                                                    
+                                                    if !day.isDateInToday && !habit.commits.isIn(day) && day.isFirstDayOfTheMonth {
+                                                        RoundedRectangle(cornerRadius: 2)
+                                                            .fill(.notDo)
+                                                            .frame(width: 8, height: 8)
+                                                        RoundedRectangle(cornerRadius: 2)
+                                                            .fill(.notDo)
+                                                            .frame(width: 8, height: 8)
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -159,5 +172,5 @@ struct HabitCommits: Widget {
 #Preview(as: .systemSmall) {
     HabitCommits()
 } timeline: {
-    SimpleEntry(habits: [.example], date: Date.today)
+    SimpleEntry(habits: [], date: Date.today)
 }

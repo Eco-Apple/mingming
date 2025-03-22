@@ -54,24 +54,24 @@ struct Home: View {
                     }
                     .listStyle(PlainListStyle())
                     .onChange(of: viewModel.habits) { old, new in
-                        var counter = 0
-                        for habit in new {
-                            habit.listOrder = counter
-                            counter += 1
+                            var counter = 0
+                            for habit in new {
+                                habit.listOrder = counter
+                                counter += 1
+                            }
                         }
-                    }
-                } else {
-                    Image(.emptyState)
-                    
-                    VStack(alignment: .center, spacing: 7) {
-                        Text("No Habits Yet")
-                            .font(.system(size: 20, weight: .medium))
-                        Text("Start building better routines today. Add your first habit\nand take the first step toward your goals!")
-                            .font(.system(size: 12, weight: .regular))
-                            .multilineTextAlignment(.center)
-                        Text("To add new habit tap \"+\"")
-                            .font(.system(size: 12, weight: .regular))
-                    }
+                    } else {
+                        Image(.emptyState)
+                        
+                        VStack(alignment: .center, spacing: 7) {
+                            Text("No Habits Yet")
+                                .font(.system(size: 20, weight: .medium))
+                            Text("Start building better routines today. Add your first habit\nand take the first step toward your goals!")
+                                .font(.system(size: 12, weight: .regular))
+                                .multilineTextAlignment(.center)
+                            Text("To add new habit tap \"+\"")
+                                .font(.system(size: 12, weight: .regular))
+                        }
                     .padding(.top, -50)
                     
                     Spacer()
@@ -95,6 +95,7 @@ struct Home: View {
             }
             .padding(.leading, 12)
             .padding(.bottom, 10)
+            .padding(.top, 10)
         }
         .customToolbar {
             HStack(alignment: .bottom, spacing: .zero) {

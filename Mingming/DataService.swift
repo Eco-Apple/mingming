@@ -78,6 +78,10 @@ class DataService {
             
             NotificationHelper.addNotification(id: String(describing: habit.id), title: habit.title, body: habit.combineTags, date: habit.schedule, repeats: true)
             
+            #if DEBUG
+            habit.generateRandomCommits(dataService: self) // TODO: remove this if, already optimized.
+            #endif
+            
             return .success((habit, tags, year))
             
             

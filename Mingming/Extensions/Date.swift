@@ -163,9 +163,4 @@ extension Date {
         formatter.pmSymbol = "PM"
         return formatter.string(from: self)
     }
-    
-    func isIn(_ commits: [Commit]) -> Bool {
-        return commits.contains { $0.status == .completed && Calendar.current.isDate($0.date, inSameDayAs: self)}
-    }
-    
 }

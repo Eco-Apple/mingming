@@ -56,6 +56,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				HabitCommits.swift,
+				Models/WidgetCommit.swift,
+				Models/WidgetHabit.swift,
+				Models/WidgetTag.swift,
 			);
 			target = 204BB0DD2D55EFD500D86202 /* Mingming */;
 		};
@@ -70,12 +73,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
-				DataService.swift,
 				Enums/NotificationHelper.swift,
 				Extensions/Date.swift,
-				Models/Commit.swift,
-				Models/Habit.swift,
-				Models/Tag.swift,
 				Models/Year.swift,
 			);
 			target = 20AB21E22D742303000ECABC /* HabitCommitsExtension */;
