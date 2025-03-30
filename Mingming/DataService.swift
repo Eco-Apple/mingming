@@ -30,7 +30,7 @@ class DataService {
         }
     }
     
-    func get(tagNames: [String] = [], year: Int? = nil) -> Result<[Habit], Error> {
+    func get(tagNames: [String] = [], year: Int? = nil) throws -> [Habit] {
         do {
             let calendar = Calendar.current
             let startOfYear = calendar.date(from: DateComponents(year: year, month: 1, day: 1))!
@@ -44,21 +44,21 @@ class DataService {
             
             let habits = try context.fetch(descriptor)
             
-            return .success(habits)
+            return habits
         } catch {
-            return .failure(error)
+            throw error
         }
     }
     
-    func get<T: PersistentModel>() -> Result<[T], Error> {
+    func get<T: PersistentModel>() throws -> [T] {
         do {
             let descriptor = FetchDescriptor<T>()
             
             let results = try context.fetch(descriptor)
             
-            return .success(results)
+            return results
         } catch {
-            return .failure(error)
+            throw error
         }
     }
     

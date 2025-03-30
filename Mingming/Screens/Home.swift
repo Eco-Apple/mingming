@@ -97,6 +97,7 @@ struct Home: View {
             .padding(.bottom, 10)
             .padding(.top, 10)
         }
+        .onAppear(perform: viewModel.onAppear)
         .customToolbar {
             HStack(alignment: .bottom, spacing: .zero) {
                 Image(.toolbarLogo)
@@ -113,7 +114,6 @@ struct Home: View {
             }
             .padding(.horizontal, 12)
         }
-        .onAppear(perform: viewModel.onAppear)
         .customAlert(isPresented: $viewModel.isAddPresented, isOverlayShow: .constant(false)) {
             Add(viewModel: viewModel.add)
         }
@@ -127,6 +127,7 @@ struct Home: View {
                 }
             }
         }
+        .loadingIndicator(isPresented: viewModel.isLoading)
     }
 }
 
@@ -164,9 +165,11 @@ private struct HomeAddButton: View {
             
             if home.isAddPresented {
                 Button {
-                    isCheckShown = false
                     Task {
                         await home.onAdd()
+                        isCheckShown = false
+                        home.add.reset()
+                        home.isAddPresented = false
                     }
                 } label: {
                     Image(.check)

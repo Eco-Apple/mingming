@@ -9,21 +9,23 @@ import SwiftUI
 
 struct HabitTile: View {
     
-    var habit: Habit
-    var startMonth: Int
+    @State private var viewModel: ViewModel
+    @State private var commitDays: [Date: Bool] = [:]
     
-    var onDelete: (Habit) -> Void
+    init(habit: Habit, startMonth: Int, onDelete: @escaping(Habit) -> Void) {
+        _viewModel = State(initialValue: .init(habit: habit, startMonth: startMonth, onDelete: onDelete))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: .zero){
             HStack(alignment: .bottom, spacing: .zero) {
-                Text(habit.title)
+                Text(viewModel.habit.title)
                     .font(.system(size: 22, weight: .medium))
                     .frame(height: 16)
                 
                 Spacer()
                 
-                Text("⏰ \(habit.schedules.first?.formatTime() ?? "")")
+                Text("⏰ \(viewModel.habit.schedules.first?.formatTime() ?? "")")
                     .font(.system(size: 9, weight: .medium))
                     .frame(height: 9)
             }
@@ -33,7 +35,7 @@ struct HabitTile: View {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 2) {
-                        ForEach(Array(Date.weekAndDaysInAYear(year: 2025).enumerated()), id: \.offset) { index, month in
+                        ForEach(Array(viewModel.dates.enumerated()), id: \.offset) { index, month in
                             VStack(alignment: .leading, spacing: 7){
                                 Text("\(Date.shortMonthName(for: index + 1) ?? "")")
                                     .font(.system(size: 10))
@@ -45,18 +47,19 @@ struct HabitTile: View {
                                             ForEach(Array(week.enumerated()), id: \.offset) { index, day in
                                                 ZStack {
                                                     RoundedRectangle(cornerRadius: day.isDateInToday ? 8 : 2)
-                                                        .fill(habit.commits.isIn(day) ? .do : day.isDateInToday ? .white : .notDo)
+                                                        .fill((viewModel.commits[day] ?? false) ? .do : day.isDateInToday ? .white : .notDo)
                                                         .frame(width: 8, height: 8)
                                                         .overlay(
                                                             Group {
                                                                 if day.isDateInToday {
                                                                     RoundedRectangle(cornerRadius: 8)
-                                                                        .stroke(habit.commits.isIn(day) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
+                                                                        .stroke((viewModel.commits[day] ?? false) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
                                                                 }
                                                             }
                                                         )
                                                     
-                                                    if !day.isDateInToday && !habit.commits.isIn(day) && day.isFirstDayOfTheMonth {
+                                                    
+                                                    if !day.isDateInToday && !(viewModel.commits[day] ?? false) && day.isFirstDayOfTheMonth {
                                                         RoundedRectangle(cornerRadius: 2)
                                                             .fill(.notDo)
                                                             .frame(width: 8, height: 8)
@@ -74,13 +77,13 @@ struct HabitTile: View {
                     }
                 }
                 .onAppear {
-                    proxy.scrollTo(startMonth - 1, anchor: .leading)
+                    proxy.scrollTo(viewModel.startMonth - 1, anchor: .leading)
                 }
             }
             
             HStack(spacing: .zero) {
                 Button {
-                   onDelete(habit)
+                    viewModel.onDelete(viewModel.habit)
                 } label: {
                     Image(systemName: "trash")
                         .font(.system(size: 12))
@@ -91,12 +94,17 @@ struct HabitTile: View {
                 Spacer()
                 
                 HStack(spacing: 4) {
-                    ForEach(habit.tags, id: \.self) { tag in
+                    ForEach(viewModel.habit.tags, id: \.self) { tag in
                         Text("#\(tag.name)")
                             .chip()
                     }
                }
                 .padding(.top, 10)
+            }
+        }
+        .onAppear {
+            Task {
+                try? await viewModel.setCommits()
             }
         }
     }

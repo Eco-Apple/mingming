@@ -31,6 +31,8 @@ extension Home {
         var selectedYear: String = "All"
         var selectedTagNames: [String] = ["All"]
         
+        var isLoading: Bool = false
+        
         init(dataService: DataService) {
             self.dataService = dataService
             self.add = Add.ViewModel(dataService: dataService)
@@ -43,17 +45,15 @@ extension Home {
         func selectYear(_ year: String) {
             selectedYear = year
             
-            Task(priority: .background) {
-                await filterHabits()
-            }
+            filterHabits()
         }
         
         func selectTagName(_ name: String) {
+            isLoading = true
             guard name != "All" else {
                 selectedTagNames = ["All"]
-                Task {
-                    await filterHabits()
-                }
+                
+                filterHabits()
                 return
             }
             
@@ -71,9 +71,8 @@ extension Home {
                 selectedTagNames = ["All"]
             }
             
-            Task {
-                await filterHabits()
-            }
+            filterHabits()
+            isLoading = false
         }
         
         func deleteButtonCallback(isDelete: Bool) {
@@ -103,7 +102,7 @@ extension Home {
         }
         
         func onAdd() async {
-            isAddPresented = false
+            isLoading = true
             
             let result = await dataService.add(habit: .init(title: add.title, schedules: [add.selectedTime], tags: add.tags.toTags(), commits: []))
             
@@ -121,7 +120,7 @@ extension Home {
                 debugPrint(error.localizedDescription)
             }
             
-            add.reset()
+            isLoading = false
         }
         
         func onRemoveReminder(habit: Habit) {
@@ -132,44 +131,30 @@ extension Home {
             }
         }
         
-        private func filterHabits() async {
-            let result: Result<[Habit], Error> = self.dataService.get(tagNames: selectedTagNames, year: Int(selectedYear))
-            
-            switch result {
-            case .success(let habits):
+        private func filterHabits() {
+            do {
+                let habits: [Habit] = try self.dataService.get(tagNames: selectedTagNames, year: Int(selectedYear))
+                
                 self.habits = habits
-            case .failure(let error):
+            } catch {
                 debugPrint(error.localizedDescription)
             }
         }
         
         private func fetchHabits() {
-            let tagResult: Result<[Tag], Error> = self.dataService.get()
-            
-            switch tagResult {
-            case .success(let tags):
+            do {
+                let tags: [Tag] = try self.dataService.get()
                 self.tags = tags
-            case .failure(let error):
-                fatalError(error.localizedDescription)
-            }
-            
-            let yearResult: Result<[Year], Error> = self.dataService.get()
-            
-            switch yearResult {
-            case .success(let years):
+                
+                let years: [Year] = try self.dataService.get()
                 self.years = years
-            case .failure(let error):
-                fatalError(error.localizedDescription)
-            }
-            
-            let habitResult: Result<[Habit], Error> = self.dataService.get()
-            
-            switch habitResult {
-            case .success(let habits):
+                
+                let habits: [Habit] = try self.dataService.get()
                 self.habits = habits
+                
                 checkReminder(habits: habits)
                 checkForgottenHabits(habits: habits)
-            case .failure(let error):
+            } catch {
                 debugPrint(error.localizedDescription)
             }
         }
