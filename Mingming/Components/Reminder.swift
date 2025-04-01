@@ -10,8 +10,8 @@ import SwiftUI
 struct Reminder: View {
     @State var viewModel: ViewModel
     
-    init(habit: Habit, onRemove: @escaping () -> Void) {
-        _viewModel = State(initialValue: .init(dataService: .shared, habit: habit, onRemove: onRemove))
+    init(habit: Habit, applyShadow: Bool, onRemove: @escaping (Commit, CommitStatus) -> Void) {
+        _viewModel = State(initialValue: .init(dataService: .shared, habit: habit, applyShadow: applyShadow, onRemove: onRemove))
     }
     
     var body: some View {
@@ -62,7 +62,7 @@ struct Reminder: View {
             .padding(.horizontal, 17)
             .background(.white)
             .cornerRadius(15)
-            .shadow(color: .black.opacity(0.25), radius: 6.3, x: 0, y: 0)
+            .shadow(color: !viewModel.applyShadow ? .clear : .black.opacity(0.25), radius: 6.3, x: 0, y: 0)
             .padding(.bottom, 10)
             .padding(.horizontal, 12)
         }
@@ -70,7 +70,7 @@ struct Reminder: View {
 }
 
 #Preview {
-    Reminder(habit: .example) {
+    Reminder(habit: .example, applyShadow: false) { _,_ in
         
     }
 }

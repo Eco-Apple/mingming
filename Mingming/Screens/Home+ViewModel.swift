@@ -33,6 +33,8 @@ extension Home {
         
         var isLoading: Bool = false
         
+        var habitCommitDays: [Habit: [Date: Bool]] = [:]
+        
         init(dataService: DataService) {
             self.dataService = dataService
             self.add = Add.ViewModel(dataService: dataService)
@@ -45,15 +47,19 @@ extension Home {
         func selectYear(_ year: String) {
             selectedYear = year
             
-            filterHabits()
+            Task {
+                await filterHabits()
+            }
         }
         
         func selectTagName(_ name: String) {
-            isLoading = true
             guard name != "All" else {
                 selectedTagNames = ["All"]
                 
-                filterHabits()
+                Task {
+                    await filterHabits()
+                }
+                
                 return
             }
             
@@ -71,8 +77,9 @@ extension Home {
                 selectedTagNames = ["All"]
             }
             
-            filterHabits()
-            isLoading = false
+            Task {
+                await filterHabits()
+            }
         }
         
         func deleteButtonCallback(isDelete: Bool) {
@@ -115,6 +122,7 @@ extension Home {
                     self.years.append(year)
                 }
                 
+                checkReminder()
                 WidgetCenter.shared.reloadAllTimelines()
             case .failure(let error):
                 debugPrint(error.localizedDescription)
@@ -123,19 +131,27 @@ extension Home {
             isLoading = false
         }
         
-        func onRemoveReminder(habit: Habit) {
+        func onRemoveReminder(habit: Habit, commit: Commit, status: CommitStatus) {
             habitsToRemind.removeAll { $0 == habit }
             
             if habitsToRemind.isEmpty {
                 isReminderPresented = false
             }
+            
+            let calendar = Calendar.current
+            
+            let status = status == .completed ? true : false
+            
+            habitCommitDays[habit]?[calendar.startOfDay(for: commit.date)] = status
         }
         
-        private func filterHabits() {
+        private func filterHabits() async {
             do {
+                isLoading = true
                 let habits: [Habit] = try self.dataService.get(tagNames: selectedTagNames, year: Int(selectedYear))
                 
                 self.habits = habits
+                isLoading = false
             } catch {
                 debugPrint(error.localizedDescription)
             }
@@ -143,6 +159,8 @@ extension Home {
         
         private func fetchHabits() {
             do {
+                isLoading = true
+                
                 let tags: [Tag] = try self.dataService.get()
                 self.tags = tags
                 
@@ -150,16 +168,23 @@ extension Home {
                 self.years = years
                 
                 let habits: [Habit] = try self.dataService.get()
+                
+                for habit in habits {
+                    habitCommitDays[habit] = [:]
+                }
+                
                 self.habits = habits
                 
-                checkReminder(habits: habits)
+                checkReminder()
                 checkForgottenHabits(habits: habits)
+                
+                isLoading = false
             } catch {
                 debugPrint(error.localizedDescription)
             }
         }
         
-        private func checkReminder(habits: [Habit]) {
+        private func checkReminder() {
             for habit in habits {
                 if let lastCommit = habit.commits.last {
                     if lastCommit.date.startOfDay < Date.today.startOfDay {

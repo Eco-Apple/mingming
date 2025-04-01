@@ -48,7 +48,7 @@ struct Home: View {
                 
                 if !viewModel.habits.isEmpty {
                     List($viewModel.habits, editActions: .move) { habit in
-                        HabitTile(habit: habit.wrappedValue, startMonth: 2, onDelete: viewModel.onDelete)
+                        HabitTile(habit: habit.wrappedValue, startMonth: 2, habitCommits: $viewModel.habitCommitDays, onDelete: viewModel.onDelete)
                             .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
                             .listRowSeparator(.hidden)
                     }
@@ -118,12 +118,14 @@ struct Home: View {
             Add(viewModel: viewModel.add)
         }
         .customAlert(isPresented: $viewModel.isDeletePresented) {
-            Delete(callback: viewModel.deleteButtonCallback)
+            Delete(title: viewModel.habitToDelete?.title ?? "" ,callback: viewModel.deleteButtonCallback)
         }
         .customAlert(isPresented: $viewModel.isReminderPresented, isOverlayShow: .constant(false)) {
             ForEach(viewModel.habitsToRemind) { habit in
-                Reminder(habit: habit) {
-                    viewModel.onRemoveReminder(habit: habit)
+                let isLast = habit == viewModel.habitsToRemind.last
+                
+                Reminder(habit: habit, applyShadow: isLast) { commit, status in
+                    viewModel.onRemoveReminder(habit: habit, commit: commit, status: status)
                 }
             }
         }

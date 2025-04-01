@@ -14,11 +14,13 @@ extension Reminder {
     class ViewModel {
         var dataService: DataService
         var habit: Habit
-        var onRemove: () -> Void
+        var applyShadow: Bool
+        var onRemove: (Commit, CommitStatus) -> Void
         
-        init(dataService: DataService, habit: Habit, onRemove: @escaping () -> Void) {
+        init(dataService: DataService, habit: Habit, applyShadow: Bool = false, onRemove: @escaping (Commit, CommitStatus) -> Void) {
             self.dataService = dataService
             self.habit = habit
+            self.applyShadow = applyShadow
             self.onRemove = onRemove
         }
         
@@ -40,11 +42,15 @@ extension Reminder {
         private func updateCommit(with status: CommitStatus) {
             if let lastCommit = habit.commits.last, lastCommit.date.startOfDay == Date.today.startOfDay {
                 lastCommit.update(status: status, dataService: dataService)
+                
+                onRemove(lastCommit, status)
             } else {
-                habit.add(commit: Commit(date: .today, status: status), dataService: dataService)
+                let commit = Commit(date: .today, status: status)
+                
+                habit.add(commit: commit, dataService: dataService)
+                onRemove(commit, status)
             }
             
-            onRemove()
         }
         
     }

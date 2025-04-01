@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct HabitTile: View {
-    
     @State private var viewModel: ViewModel
-    @State private var commitDays: [Date: Bool] = [:]
+    @Binding private var habitCommitDays: [Habit: [Date: Bool]]
     
-    init(habit: Habit, startMonth: Int, onDelete: @escaping(Habit) -> Void) {
+    init(habit: Habit, startMonth: Int, habitCommits: Binding<[Habit: [Date: Bool]]>, onDelete: @escaping(Habit) -> Void) {
         _viewModel = State(initialValue: .init(habit: habit, startMonth: startMonth, onDelete: onDelete))
+        _habitCommitDays = habitCommits
     }
     
     var body: some View {
@@ -47,19 +47,18 @@ struct HabitTile: View {
                                             ForEach(Array(week.enumerated()), id: \.offset) { index, day in
                                                 ZStack {
                                                     RoundedRectangle(cornerRadius: day.isDateInToday ? 8 : 2)
-                                                        .fill((viewModel.commits[day] ?? false) ? .do : day.isDateInToday ? .white : .notDo)
+                                                        .fill((habitCommitDays[viewModel.habit]?[day] ?? false) ? .do : day.isDateInToday ? .white : .notDo)
                                                         .frame(width: 8, height: 8)
                                                         .overlay(
                                                             Group {
                                                                 if day.isDateInToday {
                                                                     RoundedRectangle(cornerRadius: 8)
-                                                                        .stroke((viewModel.commits[day] ?? false) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
+                                                                        .stroke((habitCommitDays[viewModel.habit]?[day] ?? false) ? Color("do") : Color("today-tile-border"), lineWidth: 0.3)
                                                                 }
                                                             }
                                                         )
                                                     
-                                                    
-                                                    if !day.isDateInToday && !(viewModel.commits[day] ?? false) && day.isFirstDayOfTheMonth {
+                                                    if !day.isDateInToday && !(habitCommitDays[viewModel.habit]?[day] ?? false) && day.isFirstDayOfTheMonth {
                                                         RoundedRectangle(cornerRadius: 2)
                                                             .fill(.notDo)
                                                             .frame(width: 8, height: 8)
@@ -104,12 +103,12 @@ struct HabitTile: View {
         }
         .onAppear {
             Task {
-                try? await viewModel.setCommits()
+                try? await viewModel.setCommits(in: $habitCommitDays)
             }
         }
     }
 }
 
 #Preview {
-    HabitTile(habit: .example, startMonth: 2, onDelete: { _ in })
+    HabitTile(habit: .example, startMonth: 2, habitCommits: .constant([:]) ,onDelete: { _ in })
 }

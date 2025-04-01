@@ -5,20 +5,15 @@
 //  Created by Jerico Villaraza on 3/30/25.
 //
 
-import Foundation
-
+import SwiftUI
 
 extension HabitTile {
-    
-
     @Observable
     class ViewModel {
         var habit: Habit
         var startMonth: Int
         
         var dates: [[[Date]]]
-        var commits: [Date: Bool] = [:]
-        
         var onDelete: (Habit) -> Void
         
         init(habit: Habit, startMonth: Int, onDelete: @escaping (Habit) -> Void) {
@@ -29,18 +24,20 @@ extension HabitTile {
             dates = Date.weekAndDaysInAYear(year: 2025)
         }
         
-        func setCommits() async throws {
+        func setCommits(in commits: Binding<[Habit: [Date: Bool]]>) async throws {
+            var habitCommits = await MainActor.run { habit.commits }
             var tempCommits: [Date: Bool] = [:]
+            
             for month in dates {
                 for week in month {
                     for day in week {
-                        tempCommits[day] = habit.commits.isIn(day)
+                        tempCommits[day] = await MainActor.run { habitCommits.isIn(day) }
                     }
                 }
             }
             
             await MainActor.run {
-                commits = tempCommits
+                commits.wrappedValue[habit] = tempCommits
             }
         }
     }
