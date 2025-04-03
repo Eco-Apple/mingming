@@ -281,7 +281,9 @@ extension Home {
                     WidgetTag(id: tag.id, name: tag.name, habitCount: tag.habitCount)
                 }
                 
-                return WidgetHabit(id: habit.id, title: habit.title, schedules: habit.schedules, commits: widgetCommit, tags: widgetTag)
+                let widgetYear = WidgetYear(id: habit.year!.id, value: habit.year!.value)
+                
+                return WidgetHabit(id: habit.id, title: habit.title, year: widgetYear, schedules: habit.schedules, commits: widgetCommit, tags: widgetTag)
             }
             
             if let data = try? JSONEncoder().encode(habitSummaries) {

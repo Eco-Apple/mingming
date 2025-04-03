@@ -11,8 +11,8 @@ struct HabitTile: View {
     @State private var viewModel: ViewModel
     @Binding private var habitCommitDays: [Habit: [Date: Bool]]
     
-    init(habit: Habit, startMonth: Int, habitCommits: Binding<[Habit: [Date: Bool]]>, onDelete: @escaping(Habit) -> Void) {
-        _viewModel = State(initialValue: .init(habit: habit, startMonth: startMonth, onDelete: onDelete))
+    init(habit: Habit, startMonth: Int, selectedYear: String, habitCommits: Binding<[Habit: [Date: Bool]]>, onDelete: @escaping(Habit) -> Void) {
+        _viewModel = State(initialValue: .init(habit: habit, startMonth: startMonth, selectedYear: selectedYear, onDelete: onDelete))
         _habitCommitDays = habitCommits
     }
     
@@ -110,5 +110,5 @@ struct HabitTile: View {
 }
 
 #Preview {
-    HabitTile(habit: .example, startMonth: 2, habitCommits: .constant([:]) ,onDelete: { _ in })
+    HabitTile(habit: .example, startMonth: 2, selectedYear: "All", habitCommits: .constant([:]) ,onDelete: { _ in })
 }

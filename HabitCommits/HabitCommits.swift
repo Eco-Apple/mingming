@@ -105,7 +105,7 @@ struct HabitCommitsEntryView : View {
                     .padding(.bottom, 2)
                     
                     HStack(spacing: 2) {
-                        ForEach(Array(Date.weekAndDaysInAYear(year: 2025, startMonth:  previousMonthNumber, showNextYear: false, maxMonth: maxMonth).enumerated()), id: \.offset) { index, month in
+                        ForEach(Array(Date.weekAndDaysInAYear(year: habit.year.value, startMonth:  previousMonthNumber, showNextYear: false, maxMonth: maxMonth).enumerated()), id: \.offset) { index, month in
                             VStack(alignment: .leading, spacing: 7) {
                                 HStack(spacing: 2) {
                                     ForEach(Array(month.enumerated()), id: \.offset) { index, week in

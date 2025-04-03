@@ -48,7 +48,7 @@ struct Home: View {
                 
                 if !viewModel.habits.isEmpty {
                     List($viewModel.habits, editActions: .move) { habit in
-                        HabitTile(habit: habit.wrappedValue, startMonth: 2, habitCommits: $viewModel.habitCommitDays, onDelete: viewModel.onDelete)
+                        HabitTile(habit: habit.wrappedValue, startMonth: 2, selectedYear: viewModel.selectedYear, habitCommits: $viewModel.habitCommitDays, onDelete: viewModel.onDelete)
                             .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
                             .listRowSeparator(.hidden)
                     }
@@ -87,7 +87,7 @@ struct Home: View {
                             }
                         }
                         FilterButton("All", isActive: viewModel.selectedYear == "All") {
-                            viewModel.selectedYear = "All"
+                            viewModel.selectYear("All")
                         }
                     }
                 }

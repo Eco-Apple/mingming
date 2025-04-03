@@ -22,7 +22,7 @@ extension Date {
     }
     
     var isDateInToday: Bool {
-        Calendar.current.isDateInToday(self)
+        Calendar.current.isDate(self, inSameDayAs: .today)
     }
     
     var tomorrow: Date {

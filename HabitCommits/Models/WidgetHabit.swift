@@ -11,6 +11,7 @@ import SwiftData
 struct WidgetHabit: Codable, Identifiable {
     let id: PersistentIdentifier
     let title: String
+    let year: WidgetYear
     let schedules: [Date]
     let commits: [WidgetCommit]
     let tags: [WidgetTag]

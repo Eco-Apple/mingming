@@ -12,16 +12,24 @@ extension HabitTile {
     class ViewModel {
         var habit: Habit
         var startMonth: Int
+        var selectedYear: String
         
         var dates: [[[Date]]]
         var onDelete: (Habit) -> Void
         
-        init(habit: Habit, startMonth: Int, onDelete: @escaping (Habit) -> Void) {
+        init(habit: Habit, startMonth: Int, selectedYear: String, onDelete: @escaping (Habit) -> Void) {
             self.habit = habit
             self.startMonth = startMonth
+            self.selectedYear = selectedYear
             self.onDelete = onDelete
             
-            dates = Date.weekAndDaysInAYear(year: 2025)
+            var year = habit.year!.value
+            
+            if selectedYear != "All" {
+                year = Int(selectedYear)!
+            }
+            
+            dates = Date.weekAndDaysInAYear(year: year, startMonth: startMonth)
         }
         
         func setCommits(in commits: Binding<[Habit: [Date: Bool]]>) async throws {

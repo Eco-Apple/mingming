@@ -59,6 +59,7 @@
 				Models/WidgetCommit.swift,
 				Models/WidgetHabit.swift,
 				Models/WidgetTag.swift,
+				Models/WidgetYear.swift,
 			);
 			target = 204BB0DD2D55EFD500D86202 /* Mingming */;
 		};
