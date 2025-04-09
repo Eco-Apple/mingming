@@ -53,6 +53,7 @@ struct Home: View {
                             .listRowSeparator(.hidden)
                     }
                     .listStyle(PlainListStyle())
+                    .padding(.top, 6)
                     .onChange(of: viewModel.habits) { old, new in
                             var counter = 0
                             for habit in new {
