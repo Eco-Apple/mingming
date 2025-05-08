@@ -12,6 +12,9 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
+            Color.defaultBG
+                .ignoresSafeArea()
+            
             if isSplash {
                 Splash()
             } else {

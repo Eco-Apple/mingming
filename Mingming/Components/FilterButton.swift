@@ -30,18 +30,18 @@ struct FilterButton: View {
                     .padding(.horizontal, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(.black)
+                            .fill(.filterButtonBG)
                     )
                     .overlay {
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(.black, lineWidth: 0.5)
+                            .stroke(.filterButtonBG, lineWidth: 0.5)
                     }
             }
             .buttonStyle(PlainButtonStyle())
         } else {
             Button(action: onTap) {
                 Text(text)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.filterButtonFont)
                     .font(.system(size: 11, weight: .medium))
                     .frame(height: 10, alignment: .center)
             }
@@ -50,7 +50,7 @@ struct FilterButton: View {
             .padding(.horizontal, 12)
             .overlay {
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(.black, lineWidth: 0.5)
+                    .stroke(.filterButtonBG, lineWidth: 0.5)
             }
         }
     }

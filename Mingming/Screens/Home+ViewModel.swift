@@ -274,16 +274,16 @@ extension Home {
         private func prepareWidgetData(habits: [Habit]) {
             let habitSummaries = habits.map { habit in
                 let widgetCommit = habit.commits.map { commit in
-                    WidgetCommit(id: commit.id, date: commit.date, status: commit.status.asWidgetCommitStatus)
+                    WidgetCommit(id: UUID(), date: commit.date, status: commit.status.asWidgetCommitStatus)
                 }
                 
                 let widgetTag = habit.tags.map { tag in
-                    WidgetTag(id: tag.id, name: tag.name, habitCount: tag.habitCount)
+                    WidgetTag(id: UUID(), name: tag.name, habitCount: tag.habitCount)
                 }
                 
-                let widgetYear = WidgetYear(id: habit.year!.id, value: habit.year!.value)
+                let widgetYear = WidgetYear(id: UUID(), value: habit.year!.value)
                 
-                return WidgetHabit(id: habit.id, title: habit.title, year: widgetYear, schedules: habit.schedules, commits: widgetCommit, tags: widgetTag)
+                return WidgetHabit(id: UUID(), title: habit.title, year: widgetYear, schedules: habit.schedules, commits: widgetCommit, tags: widgetTag)
             }
             
             if let data = try? JSONEncoder().encode(habitSummaries) {

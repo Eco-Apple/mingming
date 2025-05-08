@@ -16,7 +16,7 @@ enum WidgetCommitStatus: Codable, Equatable {
 }
 
 struct WidgetCommit: Codable, Identifiable {
-    let id: PersistentIdentifier
+    let id: UUID
     let date: Date
     let status: WidgetCommitStatus
 }

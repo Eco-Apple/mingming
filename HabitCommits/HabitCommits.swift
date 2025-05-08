@@ -10,11 +10,11 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(habits: [], date: Date.today)
+        SimpleEntry(habits: [.example], date: Date.today)
     }
     
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(habits: [], date: Date.today)
+        let entry = SimpleEntry(habits: [.example], date: Date.today)
         completion(entry)
     }
     
@@ -23,6 +23,12 @@ struct Provider: TimelineProvider {
         let defaults = UserDefaults(suiteName: "group.ecovillaraza.Mingming")!
         if let data = defaults.data(forKey: "habitWidgetData"),
            let habits = try? JSONDecoder().decode([WidgetHabit].self, from: data) {
+            guard !habits.isEmpty else {
+                let entry = SimpleEntry(habits: [.example], date: Date.today)
+                let timeline = Timeline(entries: [entry], policy: .never)
+                completion(timeline)
+                return
+            }
             var entries: [SimpleEntry] = []
             
             let currentDate = Date.today
@@ -42,6 +48,10 @@ struct Provider: TimelineProvider {
             }
             
             let timeline = Timeline(entries: entries, policy: .atEnd)
+            completion(timeline)
+        } else {
+            let entry = SimpleEntry(habits: [.example], date: Date.today)
+            let timeline = Timeline(entries: [entry], policy: .never)
             completion(timeline)
         }
     }
@@ -157,11 +167,11 @@ struct HabitCommits: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
                 HabitCommitsEntryView(entry: entry)
-                    .containerBackground(.white, for: .widget)
+                    .containerBackground(.defaultBG, for: .widget)
             } else {
                 HabitCommitsEntryView(entry: entry)
                     .padding()
-                    .background(Color.white)
+                    .background(Color.defaultBG)
             }
         }
         .configurationDisplayName("My Widget")
@@ -172,5 +182,5 @@ struct HabitCommits: Widget {
 #Preview(as: .systemSmall) {
     HabitCommits()
 } timeline: {
-    SimpleEntry(habits: [], date: Date.today)
+    SimpleEntry(habits: [.example], date: Date.today)
 }

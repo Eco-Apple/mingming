@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 struct WidgetTag: Codable, Identifiable {
-    let id: PersistentIdentifier
+    let id: UUID
     let name: String
     let habitCount: Int
 }

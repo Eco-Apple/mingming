@@ -44,7 +44,7 @@ struct Add: View {
             .padding(.top, 21)
             .padding(.bottom, 24)
             .frame(width: 307, height: 139, alignment: .topLeading)
-            .background(.white)
+            .background(.defaultBG)
             .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .bottomLeft, .bottomRight]))
             .shadow(color: .black.opacity(0.25), radius: 6.3, x: 0, y: 0)
             .padding(.top, 45)

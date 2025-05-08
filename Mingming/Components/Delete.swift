@@ -46,7 +46,7 @@ struct Delete: View {
         .padding(.vertical, 20)
         .padding(.horizontal, 30)
         .frame(width: 300)
-        .background(.white)
+        .background(Color.defaultBG)
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.25), radius: 6.3, x: 0, y: 0)
     }

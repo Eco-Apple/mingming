@@ -60,7 +60,7 @@ struct Reminder: View {
             .padding(.top, 21)
             .padding(.bottom, 13)
             .padding(.horizontal, 17)
-            .background(.white)
+            .background(Color.defaultBG)
             .cornerRadius(15)
             .shadow(color: !viewModel.applyShadow ? .clear : .black.opacity(0.25), radius: 6.3, x: 0, y: 0)
             .padding(.bottom, 10)

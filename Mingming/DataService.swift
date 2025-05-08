@@ -66,8 +66,9 @@ class DataService {
         do {
             let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
             
-            guard granted else {
-                return .failure(NSError(domain: "NotificationPermission", code: 1, userInfo: [NSLocalizedDescriptionKey: "User denied notification permission."]))
+            if !granted {
+                debugPrint("User denied notification permission.")
+                
             }
             
             let tags = addTagFilter(habit)

@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 struct WidgetYear: Codable, Identifiable {
-    let id: PersistentIdentifier
+    let id: UUID
     let value: Int
 }
 

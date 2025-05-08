@@ -51,6 +51,7 @@ struct Home: View {
                         HabitTile(habit: habit.wrappedValue, startMonth: 2, selectedYear: viewModel.selectedYear, habitCommits: $viewModel.habitCommitDays, onDelete: viewModel.onDelete)
                             .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
                             .listRowSeparator(.hidden)
+                            .listRowBackground(Color.defaultBG)
                     }
                     .listStyle(PlainListStyle())
                     .padding(.top, 6)
@@ -98,6 +99,7 @@ struct Home: View {
             .padding(.bottom, 10)
             .padding(.top, 10)
         }
+        .background(Color.defaultBG)
         .onAppear(perform: viewModel.onAppear)
         .customToolbar {
             HStack(alignment: .bottom, spacing: .zero) {
@@ -114,6 +116,8 @@ struct Home: View {
                 HomeAddButton(home: viewModel)
             }
             .padding(.horizontal, 12)
+            .background(Color.defaultBG)
+            
         }
         .customAlert(isPresented: $viewModel.isAddPresented, isOverlayShow: .constant(false)) {
             Add(viewModel: viewModel.add)
@@ -158,7 +162,7 @@ private struct HomeAddButton: View {
                 }
             } label: {
                 Image(systemName: "plus")
-                    .foregroundStyle(home.isAddPresented ? .red : .black)
+                    .foregroundStyle(home.isAddPresented ? .red : .plus)
                     .font(.system(size: 20, weight: .medium))
                     .animation(.easeInOut(duration : 1).delay(0.5), value: home.isAddPresented)
             }

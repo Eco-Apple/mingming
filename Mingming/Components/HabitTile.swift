@@ -89,7 +89,7 @@ struct HabitTile: View {
                         .padding(.top, 7)
                 }
                 .buttonStyle(PlainButtonStyle())
-
+                
                 Spacer()
                 
                 HStack(spacing: 4) {
@@ -97,10 +97,11 @@ struct HabitTile: View {
                         Text("#\(tag.name)")
                             .chip()
                     }
-               }
+                }
                 .padding(.top, 10)
             }
         }
+        .background(Color.defaultBG)
         .onAppear {
             Task {
                 try? await viewModel.setCommits(in: $habitCommitDays)
